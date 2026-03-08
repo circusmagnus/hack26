@@ -1,4 +1,4 @@
-// game.js - Recreated and adapted for SCRUM-122
+// game.js - Final Integration for SCRUM-122
 
 // Game board representation
 let board = ['', '', '', '', '', '', '', '', ''];
@@ -6,8 +6,9 @@ let currentPlayer = 'X';
 let gameActive = true;
 let winCounter = parseInt(localStorage.getItem('humanWins')) || 0; // Initialize from localStorage
 
-const statusDisplay = document.querySelector('.game--status'); // Assuming a status element in HTML
-const winCounterDisplay = document.getElementById('human-wins'); // Assuming win counter element in HTML
+const statusDisplay = document.querySelector('.game--status'); // Will be used if status element is added to HTML
+const winCounterDisplay = document.getElementById('human-wins');
+const restartButton = document.querySelector('.game--restart');
 
 // Win conditions
 const winConditions = [
@@ -16,15 +17,17 @@ const winConditions = [
     [0, 4, 8], [2, 4, 6]             // Diagonals
 ];
 
-// Messages
+// Messages - these can be displayed in a status element if implemented
 const winningMessage = () => `Player ${currentPlayer} has won!`;
 const drawMessage = () => `Game ended in a draw!`;
 const currentPlayerTurn = () => `It's ${currentPlayer}'s turn`;
 
 // Update win counter display
 function updateWinCounterDisplay() {
-    winCounterDisplay.textContent = winCounter;
-    localStorage.setItem('humanWins', winCounter);
+    if (winCounterDisplay) {
+        winCounterDisplay.textContent = winCounter;
+        localStorage.setItem('humanWins', winCounter);
+    }
 }
 
 // Increment human wins
@@ -39,13 +42,14 @@ function decrementHumanWins() {
     updateWinCounterDisplay();
 }
 
-// Function to handle player moves
+// Function to handle a cell being played
 function handleCellPlayed(clickedCell, clickedCellIndex) {
     board[clickedCellIndex] = currentPlayer;
     clickedCell.textContent = currentPlayer;
-    clickedCell.classList.add(currentPlayer === 'X' ? 'x' : 'o'); // Add class for styling
+    clickedCell.classList.add(currentPlayer === 'X' ? 'x' : 'o');
 }
 
+// Function to check game result (win or draw)
 function handleResultValidation() {
     let roundWon = false;
     for (let i = 0; i < winConditions.length; i++) {
@@ -65,10 +69,10 @@ function handleResultValidation() {
     if (roundWon) {
         if (currentPlayer === 'X') { // Assuming 'X' is human
             incrementHumanWins();
-            alert(`Player ${currentPlayer} has won!`); // Temporary alert
+            alert(winningMessage()); // Using alert for now
         } else { // 'O' is opponent
-            decrementHumanWins();
-            alert(`Player ${currentPlayer} has won!`); // Temporary alert
+            decrementHumanWins(); // Human loses if opponent wins
+            alert(winningMessage()); // Using alert for now
         }
         gameActive = false;
         return;
@@ -76,25 +80,27 @@ function handleResultValidation() {
 
     let roundDraw = !board.includes("");
     if (roundDraw) {
-        alert(drawMessage()); // Temporary alert
+        alert(drawMessage()); // Using alert for now
         gameActive = false;
         return;
     }
 
-    // If no win or draw, switch player
     handlePlayerChange();
 }
 
+// Function to switch players and trigger opponent move if applicable
 function handlePlayerChange() {
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    // statusDisplay.innerHTML = currentPlayerTurn(); // Update status display if it exists
+    // If there was a status display, update it here
+    if (statusDisplay) {
+        statusDisplay.innerHTML = currentPlayerTurn();
+    }
     if (currentPlayer === 'O' && gameActive) {
         setTimeout(handleOpponentMove, 700); // Opponent moves after a slight delay
     }
 }
 
-
-// Function to handle scripted opponent moves (simple AI for now)
+// Simple AI for opponent
 function handleOpponentMove() {
     if (!gameActive) return;
 
@@ -113,7 +119,7 @@ function handleOpponentMove() {
     }
 }
 
-
+// Handle click event on cells
 function handleCellClick(clickedCellEvent) {
     const clickedCell = clickedCellEvent.target;
     const clickedCellIndex = parseInt(clickedCell.dataset.cellIndex);
@@ -126,24 +132,33 @@ function handleCellClick(clickedCellEvent) {
     handleResultValidation();
 }
 
+// Restart game function
 function handleRestartGame() {
     gameActive = true;
     currentPlayer = 'X';
     board = ['', '', '', '', '', '', '', '', ''];
-    // statusDisplay.innerHTML = currentPlayerTurn(); // Update status display if it exists
+    // Clear visual board
     document.querySelectorAll('.cell').forEach(cell => {
         cell.textContent = '';
         cell.classList.remove('x', 'o');
     });
+    // If there was a status display, update it here
+    if (statusDisplay) {
+        statusDisplay.innerHTML = currentPlayerTurn();
+    }
+    updateWinCounterDisplay(); // Re-display win counter on restart
 }
 
-
-// Initialize game
+// Initialize game: attach event listeners and set initial display
 function initializeGame() {
     document.querySelectorAll('.cell').forEach(cell => cell.addEventListener('click', handleCellClick));
-    // document.querySelector('.game--restart').addEventListener('click', handleRestartGame); // Assuming a restart button
-    // statusDisplay.innerHTML = currentPlayerTurn(); // Set initial status
-
+    if (restartButton) {
+        restartButton.addEventListener('click', handleRestartGame);
+    }
+    // If there was a status display, set initial message
+    if (statusDisplay) {
+        statusDisplay.innerHTML = currentPlayerTurn();
+    }
     updateWinCounterDisplay(); // Display initial win counter
 }
 
