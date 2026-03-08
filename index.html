@@ -1,9 +1,159 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Web Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            border: 2px solid #333;
+            background-color: #fff;
+            margin-top: 20px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            cursor: pointer;
+            border: 1px solid #ccc;
+        }
+        .cell:hover {
+            background-color: #ddd;
+        }
+        #win-counter {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        h1 {
+            color: #333;
+        }
+        #game-status {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <button>Click Me</button>
+    <h1>Tic-Tac-Toe</h1>
+    <div id="game-status"></div>
+    <div id="game-board">
+        <div class="cell" data-cell-index="0"></div>
+        <div class="cell" data-cell-index="1"></div>
+        <div class="cell" data-cell-index="2"></div>
+        <div class="cell" data-cell-index="3"></div>
+        <div class="cell" data-cell-index="4"></div>
+        <div class="cell" data-cell-index="5"></div>
+        <div class="cell" data-cell-index="6"></div>
+        <div class="cell" data-cell-index="7"></div>
+        <div class="cell" data-cell-index="8"></div>
+    </div>
+    <div id="win-counter">
+        Human Wins: <span id="human-wins">0</span>
+    </div>
+
+    <script>
+        const gameBoard = document.getElementById('game-board');
+        const cells = document.querySelectorAll('.cell');
+        const gameStatus = document.getElementById('game-status');
+        const humanWinsSpan = document.getElementById('human-wins');
+
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X'; // Human is X
+        let gameActive = true;
+        let humanWins = 0; // This will be handled by Aramis for persistence
+
+        // Function to update the win counter (for now, local)
+        function updateWinCounter() {
+            humanWinsSpan.textContent = humanWins;
+        }
+
+        const handleCellClick = (e) => {
+            const clickedCell = e.target;
+            const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
+
+            if (board[clickedCellIndex] !== '' || !gameActive) {
+                return;
+            }
+
+            board[clickedCellIndex] = currentPlayer;
+            clickedCell.textContent = currentPlayer;
+            updateGameStatus();
+
+            if (checkWin()) {
+                gameStatus.textContent = `Player ${currentPlayer} Wins!`;
+                gameActive = false;
+                if (currentPlayer === 'X') {
+                    humanWins++;
+                    updateWinCounter();
+                }
+                return;
+            }
+
+            if (checkDraw()) {
+                gameStatus.textContent = 'Game Draw!';
+                gameActive = false;
+                return;
+            }
+
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X'; // Toggle player
+            updateGameStatus();
+
+            if (currentPlayer === 'O') {
+                // Opponent's turn (will be implemented by Portos)
+                // For now, let's just log it
+                console.log("Opponent's turn");
+            }
+        };
+
+        const checkWin = () => {
+            const winConditions = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6]             // Diagonals
+            ];
+
+            for (let i = 0; i < winConditions.length; i++) {
+                const [a, b, c] = winConditions[i];
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        const checkDraw = () => {
+            return !board.includes('');
+        };
+
+        const updateGameStatus = () => {
+            if (gameActive) {
+                gameStatus.textContent = `Player ${currentPlayer}'s turn`;
+            }
+        };
+
+        cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+
+        updateGameStatus(); // Initial status
+        updateWinCounter(); // Initial win counter display
+    </script>
 </body>
 </html>
