@@ -1,10 +1,32 @@
 
 const gameBoard = document.getElementById('game-board');
-const winCounterDisplay = document.getElementById('win-counter');
+const statusDisplay = document.getElementById('status');
+const humanWinsDisplay = document.getElementById('human-wins');
+const computerWinsDisplay = document.getElementById('computer-wins');
+const resetButton = document.getElementById('reset-button');
+
 let board = ['', '', '', '', '', '', '', '', ''];
 let currentPlayer = 'X'; // Human player
 let gameActive = true;
-let winCount = 0; // Initial win count
+let humanWins = 0;
+let computerWins = 0;
+
+const winPatterns = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+    [0, 4, 8], [2, 4, 6]             // Diagonals
+];
+
+// Function to update the status display
+function updateStatus(message) {
+    statusDisplay.textContent = message;
+}
+
+// Function to update win counters display
+function updateWinCounters() {
+    humanWinsDisplay.textContent = `Human Wins: ${humanWins}`;
+    computerWinsDisplay.textContent = `Computer Wins: ${computerWins}`;
+}
 
 // Function to render the board
 function renderBoard() {
@@ -16,6 +38,30 @@ function renderBoard() {
         cellElement.dataset.index = index;
         cellElement.addEventListener('click', handleCellClick);
         gameBoard.appendChild(cellElement);
+    });
+}
+
+// Function to check for win
+function checkWin(player) {
+    return winPatterns.some(pattern => {
+        return pattern.every(index => {
+            return board[index] === player;
+        });
+    });
+}
+
+// Function to check for draw
+function checkDraw() {
+    return board.every(cell => cell !== '');
+}
+
+// Function to end the game
+function endGame(message) {
+    updateStatus(message);
+    gameActive = false;
+    // Optionally, remove event listeners or make cells unclickable
+    gameBoard.querySelectorAll('.cell').forEach(cell => {
+        cell.removeEventListener('click', handleCellClick);
     });
 }
 
@@ -33,22 +79,21 @@ function handleCellClick(event) {
     clickedCell.textContent = currentPlayer;
 
     if (checkWin(currentPlayer)) {
-        winCount++;
-        winCounterDisplay.textContent = `Win Count: ${winCount}`;
-        alert(`${currentPlayer} wins!`);
-        gameActive = false;
+        humanWins++;
+        updateWinCounters();
+        endGame(`${currentPlayer} Wins!`);
         return;
     }
 
     if (checkDraw()) {
-        alert('It's a draw!');
-        gameActive = false;
+        endGame("It's a Draw!");
         return;
     }
 
     currentPlayer = 'O'; // Switch to AI
+    updateStatus(`Player ${currentPlayer}'s Turn`);
 
-    // AI move (simplified for now)
+    // AI move
     setTimeout(handleAIMove, 500); // Simulate AI thinking
 }
 
@@ -72,42 +117,34 @@ function handleAIMove() {
     document.querySelector(`[data-index="${AIChoice}"]`).textContent = currentPlayer;
 
     if (checkWin(currentPlayer)) {
-        winCount--; // AI wins, human loses
-        winCounterDisplay.textContent = `Win Count: ${winCount}`;
-        alert('AI wins!');
-        gameActive = false;
+        computerWins++;
+        updateWinCounters();
+        endGame('Computer Wins!');
         return;
     }
 
     if (checkDraw()) {
-        alert('It's a draw!');
-        gameActive = false;
+        endGame("It's a Draw!");
         return;
     }
 
     currentPlayer = 'X'; // Switch back to human
+    updateStatus(`Player ${currentPlayer}'s Turn`);
 }
 
-
-// Function to check for win
-function checkWin(player) {
-    const winPatterns = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-        [0, 4, 8], [2, 4, 6]             // Diagonals
-    ];
-
-    return winPatterns.some(pattern => {
-        return pattern.every(index => {
-            return board[index] === player;
-        });
-    });
+// Function to reset the game
+function resetGame() {
+    board = ['', '', '', '', '', '', '', '', ''];
+    currentPlayer = 'X';
+    gameActive = true;
+    updateStatus(`Player ${currentPlayer}'s Turn`);
+    renderBoard(); // Re-render to clear marks and re-attach event listeners
 }
 
-// Function to check for draw
-function checkDraw() {
-    return board.every(cell => cell !== '');
-}
+// Event listener for reset button
+resetButton.addEventListener('click', resetGame);
 
 // Initialize game
+updateStatus(`Player ${currentPlayer}'s Turn`);
+updateWinCounters();
 renderBoard();

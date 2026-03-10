@@ -27,16 +27,39 @@
         .cell:hover {
             background-color: #f0f0f0;
         }
+        #status {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+        #win-counters {
+            text-align: center;
+            margin-top: 10px;
+        }
+        #win-counters span {
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        #reset-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <h1>Tic-Tac-Toe Game</h1>
+    <div id="status">Player X's Turn</div>
     <div id="game-board">
         <!-- Game board will be rendered here -->
     </div>
-    <div id="win-counter">
-        Win Count: 0
+    <div id="win-counters">
+        <span id="human-wins">Human Wins: 0</span>
+        <span id="computer-wins">Computer Wins: 0</span>
     </div>
+    <button id="reset-button">Reset Game</button>
     <script src="script.js"></script>
 </body>
 </html>
