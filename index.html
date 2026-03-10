@@ -3,80 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe Game</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #f4f4f4;
-        }
-        #game-board {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            grid-template-rows: repeat(3, 100px);
-            gap: 5px;
-            border: 2px solid #333;
-            background-color: #fff;
-            margin-top: 20px;
-        }
-        .cell {
-            width: 100px;
-            height: 100px;
-            background-color: #eee;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            cursor: pointer;
-            border: 1px solid #ccc;
-        }
-        .cell:hover {
-            background-color: #ddd;
-        }
-        .cell.x {
-            color: blue;
-        }
-        .cell.o {
-            color: red;
-        }
-        #win-counter {
-            margin-top: 20px;
-            font-size: 1.2em;
-        }
-        h1 {
-            color: #333;
-        }
-        .game--restart {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-        }
-    </style>
+    <title>Tic-Tac-Toe</title>
 </head>
 <body>
-    <h1>Tic-Tac-Toe</h1>
+    <h1>Tic-Tac-Toe Game</h1>
     <div id="game-board">
-        <div class="cell" data-cell-index="0"></div>
-        <div class="cell" data-cell-index="1"></div>
-        <div class="cell" data-cell-index="2"></div>
-        <div class="cell" data-cell-index="3"></div>
-        <div class="cell" data-cell-index="4"></div>
-        <div class="cell" data-cell-index="5"></div>
-        <div class="cell" data-cell-index="6"></div>
-        <div class="cell" data-cell-index="7"></div>
-        <div class="cell" data-cell-index="8"></div>
+        <!-- Game board will be rendered here -->
     </div>
     <div id="win-counter">
-        Human Wins: <span id="human-wins">0</span>
+        Win Count: 0
     </div>
-    <button class="game--restart">Restart Game</button>
-
-    <script src="game.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
