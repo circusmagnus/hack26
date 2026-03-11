@@ -7,76 +7,39 @@ canvas.height = 600;
 // Paddle properties
 const paddleWidth = 10;
 const paddleHeight = 100;
-const playerPaddleX = 0;
-const aiPaddleX = canvas.width - paddleWidth;
-let playerPaddleY = (canvas.height - paddleHeight) / 2;
-let aiPaddleY = (canvas.height - paddleHeight) / 2;
-const paddleSpeed = 7;
+
+const playerPaddle = {
+    x: 0,
+    y: (canvas.height - paddleHeight) / 2,
+    width: paddleWidth,
+    height: paddleHeight,
+    color: 'WHITE',
+    score: 0,
+    dy: 0 // delta y for movement
+};
+
+const aiPaddle = {
+    x: canvas.width - paddleWidth,
+    y: (canvas.height - paddleHeight) / 2,
+    width: paddleWidth,
+    height: paddleHeight,
+    color: 'WHITE',
+    score: 0
+};
 
 // Ball properties
-const ballSize = 10;
-let ballX = canvas.width / 2;
-let ballY = canvas.height / 2;
-let ballSpeedX = 5;
-let ballSpeedY = 5;
+const ball = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    radius: 7,
+    speed: 5,
+    velocityX: 5,
+    velocityY: 5,
+    color: 'WHITE'
+};
 
-// Player movement
-let upPressed = false;
-let downPressed = false;
-
-document.addEventListener('keydown', keyDownHandler);
-document.addEventListener('keyup', keyUpHandler);
-
-function keyDownHandler(e) {
-    if (e.key === 'Up' || e.key === 'ArrowUp') {
-        upPressed = true;
-    } else if (e.key === 'Down' || e.key === 'ArrowDown') {
-        downPressed = true;
-    }
-}
-
-function keyUpHandler(e) {
-    if (e.key === 'Up' || e.key === 'ArrowUp') {
-        upPressed = false;
-    } else if (e.key === 'Down' || e.key === 'ArrowDown') {
-        downPressed = false;
-    }
-}
-
-function movePlayerPaddle() {
-    if (upPressed && playerPaddleY > 0) {
-        playerPaddleY -= paddleSpeed;
-    } else if (downPressed && playerPaddleY < canvas.height - paddleHeight) {
-        playerPaddleY += paddleSpeed;
-    }
-}
-
-function moveBall() {
-    ballX += ballSpeedX;
-    ballY += ballSpeedY;
-
-    // Ball collision with top/bottom walls
-    if (ballY + ballSize / 2 > canvas.height || ballY - ballSize / 2 < 0) {
-        ballSpeedY *= -1;
-    }
-
-    // Ball collision with paddles
-    if (ballX - ballSize / 2 < playerPaddleX + paddleWidth && // ball's left edge is past player paddle's right edge
-        ballY + ballSize / 2 > playerPaddleY && // ball's top edge is below player paddle's top edge
-        ballY - ballSize / 2 < playerPaddleY + paddleHeight && // ball's bottom edge is above player paddle's bottom edge
-        ballSpeedX < 0 // ball is moving left
-    ) {
-        ballSpeedX *= -1; // reverse ball's horizontal direction
-    }
-
-    if (ballX + ballSize / 2 > aiPaddleX && // ball's right edge is past AI paddle's left edge
-        ballY + ballSize / 2 > aiPaddleY && // ball's top edge is below AI paddle's top edge
-        ballY - ballSize / 2 < aiPaddleY + paddleHeight && // ball's bottom edge is above AI paddle's bottom edge
-        ballSpeedX > 0 // ball is moving right
-    ) {
-        ballSpeedX *= -1; // reverse ball's horizontal direction
-    }
-}
+// Game speed for paddle movement
+const gameSpeed = 6;
 
 function drawRect(x, y, width, height, color) {
     ctx.fillStyle = color;
@@ -86,27 +49,107 @@ function drawRect(x, y, width, height, color) {
 function drawCircle(x, y, radius, color) {
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+    ctx.arc(x, y, radius, 0, Math.PI * 2, false);
+    ctx.closePath();
     ctx.fill();
 }
 
-function draw() {
-    // Draw background
-    drawRect(0, 0, canvas.width, canvas.height, '#000');
-
-    // Draw paddles
-    drawRect(playerPaddleX, playerPaddleY, paddleWidth, paddleHeight, '#FFF');
-    drawRect(aiPaddleX, aiPaddleY, paddleWidth, paddleHeight, '#FFF');
-
-    // Draw ball
-    drawCircle(ballX, ballY, ballSize / 2, '#FFF');
+function drawBackground() {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+function collision(b, p) {
+    p.top = p.y;
+    p.bottom = p.y + p.height;
+    p.left = p.x;
+    p.right = p.x + p.width;
+
+    b.top = b.y - b.radius;
+    b.bottom = b.y + b.radius;
+    b.left = b.x - b.radius;
+    b.right = b.x + b.radius;
+
+    return p.left < b.right && p.top < b.bottom && p.right > b.left && p.bottom > b.top;
+}
+
+function update() {
+    // Player paddle movement
+    playerPaddle.y += playerPaddle.dy;
+
+    // Prevent player paddle from going off-screen
+    if (playerPaddle.y < 0) {
+        playerPaddle.y = 0;
+    }
+    if (playerPaddle.y + playerPaddle.height > canvas.height) {
+        playerPaddle.y = canvas.height - playerPaddle.height;
+    }
+
+    // Ball movement
+    ball.x += ball.velocityX;
+    ball.y += ball.velocityY;
+
+    // Ball collision with top and bottom walls
+    if (ball.y - ball.radius < 0 || ball.y + ball.radius > canvas.height) {
+        ball.velocityY = -ball.velocityY;
+    }
+
+    // Determine which paddle the ball is moving towards
+    let user = (ball.x < canvas.width / 2) ? playerPaddle : aiPaddle;
+
+    if (collision(ball, user)) {
+        // Play sound if implemented
+
+        // Calculate collision point relative to the paddle
+        let collidePoint = ball.y - (user.y + user.height / 2);
+        // Normalize the collidePoint
+        collidePoint = collidePoint / (user.height / 2);
+
+        // Calculate angle in radians
+        let angleRad = (Math.PI / 4) * collidePoint;
+
+        // Change X and Y velocity direction
+        ball.velocityX = (user === playerPaddle ? 1 : -1) * ball.speed * Math.cos(angleRad);
+        ball.velocityY = ball.speed * Math.sin(angleRad);
+
+        // Increase ball speed after collision, up to a limit
+        ball.speed += 0.1; // Small speed increase
+    }
+}
+
+function draw() {
+    // Clear the canvas and draw background
+    drawBackground();
+
+    // Draw paddles
+    drawRect(playerPaddle.x, playerPaddle.y, playerPaddle.width, playerPaddle.height, playerPaddle.color);
+    drawRect(aiPaddle.x, aiPaddle.y, aiPaddle.width, aiPaddle.height, aiPaddle.color);
+
+    // Draw ball
+    drawCircle(ball.x, ball.y, ball.radius, ball.color);
+}
+
+// Game loop
 function gameLoop() {
-    movePlayerPaddle();
-    moveBall();
+    update();
     draw();
     requestAnimationFrame(gameLoop);
 }
 
+// Event listeners for player paddle movement
+document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowUp') {
+        playerPaddle.dy = -gameSpeed;
+    } else if (e.key === 'ArrowDown') {
+        playerPaddle.dy = gameSpeed;
+    }
+});
+
+document.addEventListener('keyup', e => {
+    if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        playerPaddle.dy = 0;
+    }
+});
+
+// Start the game loop
 gameLoop();
