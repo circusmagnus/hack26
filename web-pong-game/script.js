@@ -7,13 +7,15 @@ canvas.height = 600;
 const paddleWidth = 10;
 const paddleHeight = 100;
 const ballSize = 10;
+const playerSpeed = 7;
 
 let playerPaddle = {
     x: 0,
     y: canvas.height / 2 - paddleHeight / 2,
     width: paddleWidth,
     height: paddleHeight,
-    color: 'white'
+    color: 'white',
+    dy: 0 // change in y position
 };
 
 let aiPaddle = {
@@ -44,6 +46,18 @@ function drawCircle(x, y, radius, color) {
     ctx.fill();
 }
 
+function update() {
+    // Update player paddle position
+    playerPaddle.y += playerPaddle.dy;
+
+    // Keep player paddle within bounds
+    if (playerPaddle.y < 0) {
+        playerPaddle.y = 0;
+    } else if (playerPaddle.y + playerPaddle.height > canvas.height) {
+        playerPaddle.y = canvas.height - playerPaddle.height;
+    }
+}
+
 function draw() {
     // Draw background
     drawRect(0, 0, canvas.width, canvas.height, 'black');
@@ -56,4 +70,36 @@ function draw() {
     drawCircle(ball.x, ball.y, ball.size / 2, ball.color);
 }
 
-draw();
+function gameLoop() {
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+// Event listeners for player paddle movement
+document.addEventListener('keydown', e => {
+    switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+            playerPaddle.dy = -playerSpeed;
+            break;
+        case 'ArrowDown':
+        case 's':
+            playerPaddle.dy = playerSpeed;
+            break;
+    }
+});
+
+document.addEventListener('keyup', e => {
+    switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'ArrowDown':
+        case 's':
+            playerPaddle.dy = 0;
+            break;
+    }
+});
+
+// Start the game loop
+gameLoop();
