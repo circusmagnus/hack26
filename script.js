@@ -24,7 +24,8 @@ const aiPaddle = {
     width: paddleWidth,
     height: paddleHeight,
     color: 'WHITE',
-    score: 0
+    score: 0,
+    speed: 4 // AI paddle speed, slightly less than gameSpeed for challenge
 };
 
 // Ball properties
@@ -38,7 +39,7 @@ const ball = {
     color: 'WHITE'
 };
 
-// Game speed for paddle movement
+// Game speed for player paddle movement
 const gameSpeed = 6;
 
 function drawRect(x, y, width, height, color) {
@@ -97,6 +98,23 @@ function update() {
     }
     if (playerPaddle.y + playerPaddle.height > canvas.height) {
         playerPaddle.y = canvas.height - playerPaddle.height;
+    }
+
+    // AI paddle movement
+    // Simple AI: AI paddle tracks the ball's y position
+    let aiCenter = aiPaddle.y + aiPaddle.height / 2;
+    if (aiCenter < ball.y - aiPaddle.speed / 2) {
+        aiPaddle.y += aiPaddle.speed;
+    } else if (aiCenter > ball.y + aiPaddle.speed / 2) {
+        aiPaddle.y -= aiPaddle.speed;
+    }
+
+    // Prevent AI paddle from going off-screen
+    if (aiPaddle.y < 0) {
+        aiPaddle.y = 0;
+    }
+    if (aiPaddle.y + aiPaddle.height > canvas.height) {
+        aiPaddle.y = canvas.height - aiPaddle.height;
     }
 
     // Ball movement
