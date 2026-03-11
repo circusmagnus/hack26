@@ -8,7 +8,8 @@ app.use(express.json());
 let notes = [
     { id: '1', title: 'My First Note', content: 'This is the content of my first note.', category_id: null },
     { id: '2', title: 'Meeting Minutes', content: 'Discussed project timelines and budget.', category_id: null },
-    { id: '3', title: 'Ideas for new features', content: 'Implement user authentication and search.', category_id: null }
+    { id: '3', title: 'Ideas for new features', content: 'Implement user authentication and search.', category_id: null },
+    { id: '4', title: 'Important Task', content: 'Remember to complete the important task.', category_id: null }
 ];
 
 let categories = [
@@ -17,9 +18,19 @@ let categories = [
 ];
 let nextCategoryId = 3;
 
-// Notes Endpoints (from NMS-3)
+// Notes Endpoints (from NMS-3 and NMS-9)
 app.get('/notes', (req, res) => {
-    res.json(notes);
+    const { search_query } = req.query;
+    let filteredNotes = notes;
+
+    if (search_query) {
+        const lowerCaseQuery = search_query.toLowerCase();
+        filteredNotes = notes.filter(note => 
+            note.title.toLowerCase().includes(lowerCaseQuery) ||
+            note.content.toLowerCase().includes(lowerCaseQuery)
+        );
+    }
+    res.json(filteredNotes);
 });
 
 app.get('/notes/:id', (req, res) => {

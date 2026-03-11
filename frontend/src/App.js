@@ -1,16 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useParams } from 'react-router-dom';
-import CategoryManager from './CategoryManager'; // Import the new component
+import CategoryManager from './CategoryManager';
 
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredNotes, setFilteredNotes] = useState([]);
+
+  const fetchNotes = (query = '') => {
+    const url = query ? `http://localhost:3001/notes?search_query=${query}` : 'http://localhost:3001/notes';
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        setNotes(data);
+        setFilteredNotes(data); // Initially, filtered notes are all notes
+      })
+      .catch(error => console.error('Error fetching notes:', error));
+  };
 
   useEffect(() => {
-    fetch('http://localhost:3001/notes')
-      .then(response => response.json())
-      .then(data => setNotes(data))
-      .catch(error => console.error('Error fetching notes:', error));
+    fetchNotes();
   }, []);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+    fetchNotes(e.target.value); // Fetch notes with the new search query
+  };
 
   return (
     <div>
@@ -18,11 +33,17 @@ const NoteList = () => {
       <nav>
         <Link to="/manage-categories">Manage Categories</Link>
       </nav>
-      {notes.length === 0 ? (
-        <p>No notes found.</p>
+      <input
+        type="text"
+        placeholder="Search notes..."
+        value={searchQuery}
+        onChange={handleSearchChange}
+      />
+      {filteredNotes.length === 0 ? (
+        <p>No notes found matching your search.</p>
       ) : (
         <ul>
-          {notes.map(note => (
+          {filteredNotes.map(note => (
             <li key={note.id}>
               <Link to={`/notes/${note.id}`}>{note.title}</Link>
             </li>
@@ -63,7 +84,7 @@ function App() {
       <Routes>
         <Route path="/" element={<NoteList />} />
         <Route path="/notes/:id" element={<NoteDetail />} />
-        <Route path="/manage-categories" element={<CategoryManager />} /> { /* New Route */}
+        <Route path="/manage-categories" element={<CategoryManager />} />
       </Routes>
     </Router>
   );
