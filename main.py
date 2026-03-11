@@ -1,29 +1,27 @@
 import pygame
 import sys
-from utils import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, BLACK, WHITE
+from game import Game
+from utils import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
 
 def main():
     pygame.init()
-
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Snake Game")
 
     clock = pygame.time.Clock()
+    game = Game()
 
     running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            # Add keyboard input handling later for snake movement
+            game.handle_input(event)
 
-        # Game updates (will be handled by game.py later)
+        game.update()
+        game.draw(screen)
 
-        # Rendering
-        screen.fill(BLACK) # Clear the screen with black
-        # Draw game objects (snake, food) later
-        pygame.display.flip() # Update the full display Surface to the screen
-
+        pygame.display.flip()
         clock.tick(FPS)
 
     pygame.quit()
