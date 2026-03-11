@@ -8,6 +8,7 @@ const paddleWidth = 10;
 const paddleHeight = 100;
 const ballSize = 10;
 const playerSpeed = 7;
+const aiSpeed = 4; // AI paddle speed
 const ballSpeed = 5; // Initial ball speed
 
 let playerScore = 0;
@@ -74,6 +75,20 @@ function update() {
         playerPaddle.y = 0;
     } else if (playerPaddle.y + playerPaddle.height > canvas.height) {
         playerPaddle.y = canvas.height - playerPaddle.height;
+    }
+
+    // Update AI paddle position
+    if (aiPaddle.y + aiPaddle.height / 2 < ball.y) {
+        aiPaddle.y += aiSpeed;
+    } else if (aiPaddle.y + aiPaddle.height / 2 > ball.y) {
+        aiPaddle.y -= aiSpeed;
+    }
+
+    // Keep AI paddle within bounds
+    if (aiPaddle.y < 0) {
+        aiPaddle.y = 0;
+    } else if (aiPaddle.y + aiPaddle.height > canvas.height) {
+        aiPaddle.y = canvas.height - aiPaddle.height;
     }
 
     // Update ball position
