@@ -8,6 +8,7 @@ const paddleWidth = 10;
 const paddleHeight = 100;
 const ballSize = 10;
 const playerSpeed = 7;
+const ballSpeed = 5; // Initial ball speed
 
 let playerPaddle = {
     x: 0,
@@ -30,7 +31,9 @@ let ball = {
     x: canvas.width / 2,
     y: canvas.height / 2,
     size: ballSize,
-    color: 'white'
+    color: 'white',
+    dx: ballSpeed, // Ball x velocity
+    dy: ballSpeed  // Ball y velocity
 };
 
 function drawRect(x, y, width, height, color) {
@@ -55,6 +58,15 @@ function update() {
         playerPaddle.y = 0;
     } else if (playerPaddle.y + playerPaddle.height > canvas.height) {
         playerPaddle.y = canvas.height - playerPaddle.height;
+    }
+
+    // Update ball position
+    ball.x += ball.dx;
+    ball.y += ball.dy;
+
+    // Ball collision with top and bottom walls
+    if (ball.y - ball.size / 2 < 0 || ball.y + ball.size / 2 > canvas.height) {
+        ball.dy *= -1; // Reverse y direction
     }
 }
 

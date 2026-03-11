@@ -11,11 +11,43 @@ const playerPaddleX = 0;
 const aiPaddleX = canvas.width - paddleWidth;
 let playerPaddleY = (canvas.height - paddleHeight) / 2;
 let aiPaddleY = (canvas.height - paddleHeight) / 2;
+const paddleSpeed = 7;
 
 // Ball properties
 const ballSize = 10;
 let ballX = canvas.width / 2;
 let ballY = canvas.height / 2;
+
+// Player movement
+let upPressed = false;
+let downPressed = false;
+
+document.addEventListener('keydown', keyDownHandler);
+document.addEventListener('keyup', keyUpHandler);
+
+function keyDownHandler(e) {
+    if (e.key === 'Up' || e.key === 'ArrowUp') {
+        upPressed = true;
+    } else if (e.key === 'Down' || e.key === 'ArrowDown') {
+        downPressed = true;
+    }
+}
+
+function keyUpHandler(e) {
+    if (e.key === 'Up' || e.key === 'ArrowUp') {
+        upPressed = false;
+    } else if (e.key === 'Down' || e.key === 'ArrowDown') {
+        downPressed = false;
+    }
+}
+
+function movePlayerPaddle() {
+    if (upPressed && playerPaddleY > 0) {
+        playerPaddleY -= paddleSpeed;
+    } else if (downPressed && playerPaddleY < canvas.height - paddleHeight) {
+        playerPaddleY += paddleSpeed;
+    }
+}
 
 function drawRect(x, y, width, height, color) {
     ctx.fillStyle = color;
@@ -41,4 +73,10 @@ function draw() {
     drawCircle(ballX, ballY, ballSize / 2, '#FFF');
 }
 
-draw(); // Initial draw to set up the game elements
+function gameLoop() {
+    movePlayerPaddle();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
