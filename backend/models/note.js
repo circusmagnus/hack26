@@ -12,6 +12,18 @@ const Note = {
       throw err;
     }
   },
+
+  delete: async (id) => {
+    try {
+      const result = await pool.query(
+        'DELETE FROM notes WHERE id = $1 RETURNING *;',
+        [id]
+      );
+      return result.rows[0]; // Returns the deleted note or undefined if not found
+    } catch (err) {
+      throw err;
+    }
+  },
 };
 
 module.exports = Note;

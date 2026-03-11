@@ -29,6 +29,22 @@ const notesController = {
       res.status(500).json({ error: 'Internal server error' });
     }
   },
+
+  deleteNote: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deletedNote = await Note.delete(id);
+
+      if (!deletedNote) {
+        return res.status(404).json({ error: 'Note not found.' });
+      }
+
+      res.status(200).json({ message: 'Note deleted successfully.', deletedNoteId: id });
+    } catch (error) {
+      console.error('Error deleting note:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
 };
 
 module.exports = notesController;
