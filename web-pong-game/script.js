@@ -68,6 +68,22 @@ function update() {
     if (ball.y - ball.size / 2 < 0 || ball.y + ball.size / 2 > canvas.height) {
         ball.dy *= -1; // Reverse y direction
     }
+
+    // Ball collision with player paddle
+    if (ball.x - ball.size / 2 < playerPaddle.x + playerPaddle.width &&
+        ball.x + ball.size / 2 > playerPaddle.x &&
+        ball.y - ball.size / 2 < playerPaddle.y + playerPaddle.height &&
+        ball.y + ball.size / 2 > playerPaddle.y) {
+        ball.dx *= -1; // Reverse x direction
+    }
+
+    // Ball collision with AI paddle
+    if (ball.x + ball.size / 2 > aiPaddle.x &&
+        ball.x - ball.size / 2 < aiPaddle.x + aiPaddle.width &&
+        ball.y - ball.size / 2 < aiPaddle.y + aiPaddle.height &&
+        ball.y + ball.size / 2 > aiPaddle.y) {
+        ball.dx *= -1; // Reverse x direction
+    }
 }
 
 function draw() {

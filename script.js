@@ -17,6 +17,8 @@ const paddleSpeed = 7;
 const ballSize = 10;
 let ballX = canvas.width / 2;
 let ballY = canvas.height / 2;
+let ballSpeedX = 5;
+let ballSpeedY = 5;
 
 // Player movement
 let upPressed = false;
@@ -49,6 +51,16 @@ function movePlayerPaddle() {
     }
 }
 
+function moveBall() {
+    ballX += ballSpeedX;
+    ballY += ballSpeedY;
+
+    // Ball collision with top/bottom walls
+    if (ballY + ballSize / 2 > canvas.height || ballY - ballSize / 2 < 0) {
+        ballSpeedY *= -1;
+    }
+}
+
 function drawRect(x, y, width, height, color) {
     ctx.fillStyle = color;
     ctx.fillRect(x, y, width, height);
@@ -75,6 +87,7 @@ function draw() {
 
 function gameLoop() {
     movePlayerPaddle();
+    moveBall();
     draw();
     requestAnimationFrame(gameLoop);
 }
