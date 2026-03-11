@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Note = require('../models/note');
+const Category = require('../models/category'); // Added
 
 // Get all notes
 router.get('/', (req, res) => {
@@ -19,20 +20,32 @@ router.get('/:id', (req, res) => {
 
 // Create a new note
 router.post('/', (req, res) => {
-    const { title, content } = req.body;
+    const { title, content, category_id } = req.body; // Added category_id
     if (!title || !content) {
         return res.status(400).send('Title and content are required');
     }
-    const newNote = Note.create(title, content);
+
+    // Validate category_id if provided
+    if (category_id && !Category.findById(category_id)) {
+        return res.status(400).send('Invalid category ID');
+    }
+
+    const newNote = Note.create(title, content, category_id); // Passed category_id
     res.status(201).json(newNote);
 });
 
 // Update an existing note (NMS-4 implementation)
 router.put('/:id', (req, res) => {
-    const { title, content } = req.body;
-    const updatedNote = Note.update(req.params.id, title, content);
+    const { title, content, category_id } = req.body; // Added category_id
+    
+    // Validate category_id if provided
+    if (category_id && !Category.findById(category_id)) {
+        return res.status(400).send('Invalid category ID');
+    }
 
-    if (!title || !content) {
+    const updatedNote = Note.update(req.params.id, title, content, category_id); // Passed category_id
+
+    if (!title || !content) { // This validation should be before Note.update if they are mandatory
         return res.status(400).send('Title and content are required');
     }
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useParams } from 'react-router-dom';
+import CategoryManager from './CategoryManager'; // Import the new component
 
 const NoteList = () => {
   const [notes, setNotes] = useState([]);
@@ -14,6 +15,9 @@ const NoteList = () => {
   return (
     <div>
       <h1>My Notes</h1>
+      <nav>
+        <Link to="/manage-categories">Manage Categories</Link>
+      </nav>
       {notes.length === 0 ? (
         <p>No notes found.</p>
       ) : (
@@ -59,6 +63,7 @@ function App() {
       <Routes>
         <Route path="/" element={<NoteList />} />
         <Route path="/notes/:id" element={<NoteDetail />} />
+        <Route path="/manage-categories" element={<CategoryManager />} /> { /* New Route */}
       </Routes>
     </Router>
   );
