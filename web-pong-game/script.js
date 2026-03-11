@@ -10,6 +10,9 @@ const ballSize = 10;
 const playerSpeed = 7;
 const ballSpeed = 5; // Initial ball speed
 
+let playerScore = 0;
+let aiScore = 0;
+
 let playerPaddle = {
     x: 0,
     y: canvas.height / 2 - paddleHeight / 2,
@@ -49,6 +52,19 @@ function drawCircle(x, y, radius, color) {
     ctx.fill();
 }
 
+function drawText(text, x, y, color, fontSize = 40) {
+    ctx.fillStyle = color;
+    ctx.font = `${fontSize}px Arial`;
+    ctx.fillText(text, x, y);
+}
+
+function resetBall() {
+    ball.x = canvas.width / 2;
+    ball.y = canvas.height / 2;
+    ball.dx *= -1; // Serve in opposite direction
+    ball.dy = Math.random() * ballSpeed * 2 - ballSpeed; // Randomize y direction
+}
+
 function update() {
     // Update player paddle position
     playerPaddle.y += playerPaddle.dy;
@@ -67,6 +83,15 @@ function update() {
     // Ball collision with top and bottom walls
     if (ball.y - ball.size / 2 < 0 || ball.y + ball.size / 2 > canvas.height) {
         ball.dy *= -1; // Reverse y direction
+    }
+
+    // Ball scoring
+    if (ball.x - ball.size / 2 < 0) {
+        aiScore++;
+        resetBall();
+    } else if (ball.x + ball.size / 2 > canvas.width) {
+        playerScore++;
+        resetBall();
     }
 
     // Ball collision with player paddle
@@ -96,6 +121,10 @@ function draw() {
 
     // Draw ball
     drawCircle(ball.x, ball.y, ball.size / 2, ball.color);
+
+    // Draw scores
+    drawText(playerScore, canvas.width / 4, canvas.height / 5, 'white');
+    drawText(aiScore, 3 * canvas.width / 4, canvas.height / 5, 'white');
 }
 
 function gameLoop() {
