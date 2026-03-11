@@ -7,34 +7,15 @@ canvas.height = 600;
 // Paddle properties
 const paddleWidth = 10;
 const paddleHeight = 100;
-const playerPaddle = {
-    x: 0,
-    y: (canvas.height - paddleHeight) / 2,
-    width: paddleWidth,
-    height: paddleHeight,
-    color: 'WHITE',
-    score: 0
-};
-
-const aiPaddle = {
-    x: canvas.width - paddleWidth,
-    y: (canvas.height - paddleHeight) / 2,
-    width: paddleWidth,
-    height: paddleHeight,
-    color: 'WHITE',
-    score: 0
-};
+const playerPaddleX = 0;
+const aiPaddleX = canvas.width - paddleWidth;
+let playerPaddleY = (canvas.height - paddleHeight) / 2;
+let aiPaddleY = (canvas.height - paddleHeight) / 2;
 
 // Ball properties
-const ball = {
-    x: canvas.width / 2,
-    y: canvas.height / 2,
-    radius: 7,
-    speed: 5,
-    velocityX: 5,
-    velocityY: 5,
-    color: 'WHITE'
-};
+const ballSize = 10;
+let ballX = canvas.width / 2;
+let ballY = canvas.height / 2;
 
 function drawRect(x, y, width, height, color) {
     ctx.fillStyle = color;
@@ -44,27 +25,20 @@ function drawRect(x, y, width, height, color) {
 function drawCircle(x, y, radius, color) {
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2, false);
-    ctx.closePath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2, true);
     ctx.fill();
 }
 
-function drawBackground() {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-
 function draw() {
-    // Clear the canvas and draw background
-    drawBackground();
+    // Draw background
+    drawRect(0, 0, canvas.width, canvas.height, '#000');
 
     // Draw paddles
-    drawRect(playerPaddle.x, playerPaddle.y, playerPaddle.width, playerPaddle.height, playerPaddle.color);
-    drawRect(aiPaddle.x, aiPaddle.y, aiPaddle.width, aiPaddle.height, aiPaddle.color);
+    drawRect(playerPaddleX, playerPaddleY, paddleWidth, paddleHeight, '#FFF');
+    drawRect(aiPaddleX, aiPaddleY, paddleWidth, paddleHeight, '#FFF');
 
     // Draw ball
-    drawCircle(ball.x, ball.y, ball.radius, ball.color);
+    drawCircle(ballX, ballY, ballSize / 2, '#FFF');
 }
 
-// Initial draw
-draw();
+draw(); // Initial draw to set up the game elements
