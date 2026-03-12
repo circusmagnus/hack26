@@ -5,10 +5,19 @@ body {
     justify-content: center;
     min-height: 100vh;
     margin: 0;
-    background-color: #f0f0f0;
+    background-color: #ffe6f2; /* Light pink, cheerful */
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Kid-friendly font */
+}
+
+h1 {
+    color: #ff69b4; /* Hot pink for title */
+    margin-bottom: 20px;
+    text-shadow: 2px 2px #fff;
 }
 
 canvas {
-    border: 2px solid #333;
-    background-color: #fff;
+    border: 8px solid #ffcc00; /* Bright yellow border */
+    border-radius: 15px; /* Rounded corners for a softer look */
+    background-color: #e0ffff; /* Light cyan, playful background for game area */
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.5); /* Pink glow */
 }

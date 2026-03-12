@@ -9,16 +9,26 @@ let snake = [
 ];
 let direction = 'right';
 let changingDirection = false;
+let food = {x: 15 * gridSize, y: 10 * gridSize}; // Placeholder food position
 
 function drawSnakePart(snakePart) {
-    ctx.fillStyle = 'lightgreen';
-    ctx.strokeStyle = 'darkgreen';
+    ctx.fillStyle = '#ff69b4'; // Hot pink
+    ctx.strokeStyle = '#8a2be2'; // Blue violet
     ctx.fillRect(snakePart.x, snakePart.y, gridSize, gridSize);
     ctx.strokeRect(snakePart.x, snakePart.y, gridSize, gridSize);
 }
 
 function drawSnake() {
     snake.forEach(drawSnakePart);
+}
+
+function drawFood() {
+    ctx.fillStyle = '#ff0000'; // Red apple
+    ctx.strokeStyle = '#8b0000'; // Dark red
+    ctx.beginPath();
+    ctx.arc(food.x + gridSize / 2, food.y + gridSize / 2, gridSize / 2, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
 }
 
 function advanceSnake() {
@@ -60,8 +70,8 @@ function changeDirection(event) {
 }
 
 function clearCanvas() {
-    ctx.fillStyle = 'white';
-    ctx.strokeStyle = 'black';
+    ctx.fillStyle = '#e0ffff'; // Light cyan, matching canvas background in CSS
+    ctx.strokeStyle = '#6a5acd'; // Slate blue for border, matching overall theme
     ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
     ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
 }
@@ -72,6 +82,7 @@ function main() {
     changingDirection = false;
     setTimeout(function onTick() {
         clearCanvas();
+        drawFood(); // Draw food
         advanceSnake();
         drawSnake();
 
