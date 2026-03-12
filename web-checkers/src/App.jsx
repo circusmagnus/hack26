@@ -6,9 +6,10 @@ import {
 import './App.css'
 
 function Piece({
-  player
+  player,
+  isSelected
 }) {
-  return <div className={`piece ${player}`}></div>;
+  return <div className={`piece ${player} ${isSelected ? 'selected' : ''}`}></div>;
 }
 
 function App() {
@@ -45,10 +46,28 @@ function App() {
   });
 
   const [turn, setTurn] = useState('human'); // 'human' or 'computer'
+  const [selectedPieceIndex, setSelectedPieceIndex] = useState(null); // New state for selected piece
 
   const switchTurn = useCallback(() => {
     setTurn((prevTurn) => (prevTurn === 'human' ? 'computer' : 'human'));
   }, []);
+
+  const isValidMove = useCallback((fromIndex, toIndex) => {
+    const fromSquare = board[fromIndex];
+    const toSquare = board[toIndex];
+
+    if (!fromSquare.piece || toSquare.piece) return false; // Must select a piece and move to an empty square
+    if (toSquare.color === 'white') return false; // Must move to a black square
+\n    const rowDiff = Math.abs(board[toIndex].row - board[fromIndex].row);
+    const colDiff = Math.abs(board[toIndex].col - board[fromIndex].col);
+
+    if (rowDiff === 1 && colDiff === 1) {
+      // Basic diagonal move
+      return true;
+    }
+
+    return false; // No capture logic for now
+  }, [board]);
 
   const handleMove = useCallback((fromIndex, toIndex) => {
     setBoard((prevBoard) => {
@@ -61,6 +80,34 @@ function App() {
       return newBoard;
     });
   }, []);
+
+  const handleSquareClick = useCallback((index) => {
+    if (turn !== 'human') return; // Only human can click
+
+    const clickedSquare = board[index];
+
+    if (selectedPieceIndex !== null) {
+      // A piece is already selected
+      if (selectedPieceIndex === index) {
+        // Clicked the same piece, deselect it
+        setSelectedPieceIndex(null);
+      } else if (isValidMove(selectedPieceIndex, index)) {
+        // Clicked an empty valid square, move the piece
+        handleMove(selectedPieceIndex, index);
+        setSelectedPieceIndex(null);
+        switchTurn(); // Switch turn after a valid move
+      } else {
+        // Invalid move, deselect
+        setSelectedPieceIndex(null);
+      }
+    } else {
+      // No piece is selected
+      if (clickedSquare.piece && clickedSquare.piece.player === 'red') {
+        // Select human player's piece
+        setSelectedPieceIndex(index);
+      }
+    }
+  }, [board, selectedPieceIndex, isValidMove, handleMove, switchTurn, turn]);
 
   const findValidComputerMoves = useCallback(() => {
     const computerMoves = [];
@@ -132,9 +179,11 @@ function App() {
           <div
             key={index}
             className={`square ${square.color}`}
-            // onClick={() => handleMove(index, 'some_other_index')} // Placeholder for now
+            onClick={() => handleSquareClick(index)} // Add onClick handler
           >
-            {square.piece && <Piece player={square.piece.player} />}
+            {square.piece && (
+              <Piece player={square.piece.player} isSelected={selectedPieceIndex === index} />
+            )}
           </div>
         ))}
       </div>

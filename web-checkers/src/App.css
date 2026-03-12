@@ -40,6 +40,10 @@
   background-color: #34495e;
 }
 
+.piece.selected {
+  border: 4px solid #f9d71c; /* Highlight color for selected piece */
+}
+
 /* My styles for the Vite React boilerplate */
 #root {
   max-width: 1280px;
