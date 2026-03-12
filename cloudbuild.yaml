@@ -1,0 +1,36 @@
+steps:
+- id: build
+  name: gcr.io/cloud-builders/docker
+  automapSubstitutions: true
+  entrypoint: bash
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    docker build \
+      -t ${_ARTIFACT_REPO_URL}/demo:${SHORT_SHA} \
+      -t ${_ARTIFACT_REPO_URL}/demo:${TAG_NAME} \
+      .
+- id: push
+  name: gcr.io/cloud-builders/docker
+  args:
+  - push
+  - ${_ARTIFACT_REPO_URL}/demo
+  - --all-tags
+- id: update-job
+  name: gcr.io/cloud-builders/gcloud
+  automapSubstitutions: true
+  entrypoint: bash
+  args:
+  - '-eEuo'
+  - 'pipefail'
+  - '-c'
+  - |-
+    IMAGE_TAG=${SHORT_SHA}
+    gcloud run jobs update demo \
+      --region ${_REGION} \
+      --image ${_ARTIFACT_REPO_URL}/demo:$${IMAGE_TAG}
+options:
+  logging: CLOUD_LOGGING_ONLY
+serviceAccount: ${_SA_EMAIL}
