@@ -1,14 +1,20 @@
 .App {
-  font-family: 'Comic Sans MS', cursive, sans-serif; /* Kid-friendly font */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
   text-align: center;
   background-color: #f0f8ff; /* AliceBlue - light and friendly */
+}
+
+.App-header {
+  background-color: #282c34;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: #333;
+  color: white;
 }
 
 h1 {
@@ -16,23 +22,14 @@ h1 {
   margin-bottom: 20px;
 }
 
-.game-container {
-  border: 5px solid #4682b4; /* SteelBlue - clear border */
-  background-color: #e0ffff; /* LightCyan - light background for game area */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  border-radius: 15px;
-  overflow: hidden;
-}
-
-/* Placeholder for game canvas */
 canvas {
-  display: block;
+  border: 1px solid white;
 }
 
-.controls {
+.game-over {
+  color: yellow;
+  font-size: 2em;
   margin-top: 20px;
-  display: flex;
-  gap: 15px;
 }
 
 .control-button {
@@ -45,9 +42,9 @@ canvas {
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s ease;
+  margin-top: 20px; /* Added margin for separation */
 }
 
 .control-button:hover {
   background-color: #66cdaa; /* MediumAquamarine - slightly darker on hover */
 }
-
