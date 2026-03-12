@@ -68,6 +68,7 @@ h1 {
     font-weight: bold;
     color: white;
     font-size: 1.2em;
+    cursor: pointer;
 }
 
 .red-piece {
@@ -76,4 +77,19 @@ h1 {
 
 .black-piece {
     background-color: #36454F;
+}
+
+.king {
+    font-size: 1.5em;
+    color: gold;
+    border-color: gold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+}
+
+.selected {
+    background-color: yellow; /* Highlight selected square */
+}
+
+.selected-piece {
+    box-shadow: 0 0 0 3px yellow; /* Highlight selected piece */
 }
