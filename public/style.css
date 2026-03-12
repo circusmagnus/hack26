@@ -10,6 +10,9 @@
 .square {
     width: 50px;
     height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .black {
@@ -24,11 +27,11 @@
     border-radius: 50%;
     width: 40px;
     height: 40px;
-    margin: 5px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .red-piece {
@@ -39,4 +42,8 @@
 .green-piece {
     background-color: green;
     color: white;
+}
+
+.selected {
+    border: 2px solid blue; /* Highlight selected piece */
 }
