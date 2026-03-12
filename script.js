@@ -1,20 +1,26 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const gameStatusMessage = document.getElementById('game-status-message');
+const scoreDisplay = document.getElementById('scoreDisplay'); // Get score display element
+const gameStatusMessage = document.getElementById('game-status-message'); // From HEAD (Aramis's work)
 
 const gridSize = 20; // Size of each snake segment and food item
 const tileCount = canvas.width / gridSize; // Number of tiles in a row/column
-
 let snake = [{ x: 10 * gridSize, y: 10 * gridSize }]; // Initial snake position (head)
 let food = {}; // Food position, will be generated
-let dx = gridSize; // Horizontal velocity (remote's approach)
-let dy = 0; // Vertical velocity (remote's approach)
+let dx = gridSize; // Horizontal velocity
+let dy = 0; // Vertical velocity
 let score = 0;
 let gameOver = false;
 let changingDirection = false; // To prevent multiple direction changes per game tick
 
+// Function to update the score display
+function updateScoreDisplay() {
+    scoreDisplay.textContent = `Score: ${score}`;
+}
+
 // Generate initial food position
 function generateFood() {
+    // Ensure food does not spawn on the snake
     let newFoodX, newFoodY;
     do {
         newFoodX = Math.floor(Math.random() * tileCount) * gridSize;
@@ -41,7 +47,7 @@ function drawFood() {
     drawRect(food.x, food.y, 'red');
 }
 
-// Move the snake and handle collisions
+// Move the snake and handle collisions (Adopted Athos's approach)
 function moveSnake() {
     // Create the new head
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
@@ -51,14 +57,14 @@ function moveSnake() {
     if (head.x < 0 || head.x >= canvas.width ||
         head.y < 0 || head.y >= canvas.height) {
         gameOver = true;
-        return;
+        return; // Stop further movement logic if game is over
     }
 
-    // 2. Self-collision
+    // 2. Self-collision (Athos's starting from i=1 is correct)
     for (let i = 1; i < snake.length; i++) {
         if (head.x === snake[i].x && head.y === snake[i].y) {
             gameOver = true;
-            return;
+            return; // Stop further movement logic if game is over
         }
     }
 
@@ -70,6 +76,7 @@ function moveSnake() {
     if (didEatFood) {
         score += 10;
         generateFood(); // Generate new food
+        updateScoreDisplay(); // Update score display when food is eaten
     } else {
         // Remove the tail if no food was eaten
         snake.pop();
@@ -78,7 +85,7 @@ function moveSnake() {
 
 // Handle keyboard input
 document.addEventListener('keydown', e => {
-    if (gameOver) return; // Prevent changing direction after game over
+    if (gameOver) return;
     if (changingDirection) return;
     changingDirection = true;
 
@@ -110,28 +117,30 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// Main game loop
-function gameTick() { // Renamed from main to gameTick for clarity
+// Main game loop (Renamed to gameTick from HEAD, kept my setTimeout logic with added gameTick call)
+function gameTick() {
     if (gameOver) {
-        gameStatusMessage.innerText = 'Game Over!';
+        gameStatusMessage.innerText = 'Game Over!'; // Using Aramis's element
         return; // Stop the game loop
     }
 
-    changingDirection = false; // Reset for next game tick
+    changingDirection = false;
 
-    setTimeout(function onTick() { 
+    setTimeout(function onTick() {
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
 
         drawFood();
         moveSnake(); // This now includes collision detection
         drawSnake();
+        updateScoreDisplay(); // Update score display in each frame
 
-        // Check if game is over after moveSnake, before the next tick
+        // Call gameTick again if game is not over (Integrated Athos's if check)
         if (!gameOver) {
-            gameTick(); // Call gameTick again if game is not over
+            gameTick();
         }
     }, 100); // Game speed
 }
 
 generateFood(); // Initial food generation
+updateScoreDisplay(); // Initial display of score
 gameTick(); // Start the game loop
