@@ -2,9 +2,7 @@
 FROM nginx:alpine
 
 # Copy static files to the Nginx html directory
-COPY index.html /usr/share/nginx/html/
-COPY script.js /usr/share/nginx/html/
-COPY style.css /usr/share/nginx/html/
+COPY . /usr/share/nginx/html/
 
 # Optional: Change Nginx to listen on port 8080 (Cloud Run's default)
 # if you want to use Cloud Run's default port configuration without overrides.
