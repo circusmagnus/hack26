@@ -1,7 +1,7 @@
 
 import './style.css';
-import { drawPiece, drawBoard } from './rendering.js'; // Removed clearCanvas as it's not used here directly
-import { gameBoard, initializeBoard, BOARD_SIZE, CELL_SIZE } from './game.js';
+import { drawPiece, drawBoard, highlightSelectedPiece } from './rendering.js';
+import { gameBoard, initializeBoard, BOARD_SIZE, CELL_SIZE, handlePieceClick, selectedPiece } from './game.js';
 
 document.querySelector('#app').innerHTML = `
   <div>
@@ -29,11 +29,34 @@ document.addEventListener('DOMContentLoaded', () => {
               } else if (piece === 2) { // Green piece
                   drawPiece(ctx, centerX, centerY, 'green');
               }
+
+              // Highlight selected piece
+              if (selectedPiece && selectedPiece.row === row && selectedPiece.col === col) {
+                highlightSelectedPiece(ctx, row, col);
+              }
           }
       }
   }
 
+  function renderGame() {
+    drawBoard(ctx);
+    drawAllPieces();
+  }
+
   initializeBoard();
-  drawBoard(ctx);
-  drawAllPieces();
+  renderGame(); // Initial render
+
+  canvas.addEventListener('click', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const col = Math.floor(x / CELL_SIZE);
+    const row = Math.floor(y / CELL_SIZE);
+
+    if (row >= 0 && row < BOARD_SIZE && col >= 0 && col < BOARD_SIZE) {
+        handlePieceClick(row, col);
+        renderGame(); // Re-render after a click
+    }
+  });
 });

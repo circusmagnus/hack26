@@ -19,9 +19,14 @@ export function clearCanvas(ctx, canvas) {
 export function drawBoard(ctx) {
     for (let row = 0; row < BOARD_SIZE; row++) {
         for (let col = 0; col < BOARD_SIZE; col++) {
-            // Using colors for alternating squares from remote, as it's Porthos's task.
             ctx.fillStyle = (row + col) % 2 === 0 ? '#F0D9B5' : '#B58863';
             ctx.fillRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
     }
+}
+
+export function highlightSelectedPiece(ctx, row, col) {
+    ctx.strokeStyle = 'yellow'; // Highlight color
+    ctx.lineWidth = 4;
+    ctx.strokeRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 }
