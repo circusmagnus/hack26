@@ -4,6 +4,8 @@ const GRID_SIZE = 20;
 const TILE_COUNT = CANVAS_SIZE / GRID_SIZE;
 const INITIAL_SNAKE_LENGTH = 3;
 const GAME_SPEED = 150; // Milliseconds per frame
+const OBSTACLE_THRESHOLD = 5; // Snake length to start generating obstacles
+const MAX_OBSTACLES = 10; // Maximum number of obstacles
 
 // Game variables
 let snake = [
@@ -12,6 +14,7 @@ let snake = [
     { x: 8, y: 10 }
 ];
 let food = {};
+let obstacles = []; // New array for obstacles
 let dx = 1; // Initial direction x (right)
 let dy = 0; // Initial direction y (no vertical movement)
 let changingDirection = false;
@@ -38,8 +41,15 @@ function main() {
 // Game tick function - updates game state
 function gameTick() {
     changingDirection = false;
+    if (checkGameOver()) { // Check for game over conditions
+        clearInterval(gameInterval);
+        alert('Game Over! Score: ' + score);
+        return;
+    }
     clearCanvas();
-    drawFood(); // Draw food
+    drawFood();
+    generateObstacles(); // Regenerate obstacles based on snake length
+    drawObstacles(); // Draw obstacles
     moveSnake();
     drawSnake();
 }
@@ -55,6 +65,11 @@ function drawSquare(x, y, color) {
 // Draw the snake
 function drawSnake() {
     snake.forEach(segment => drawSquare(segment.x, segment.y, 'lightgreen'));
+}
+
+// Draw obstacles
+function drawObstacles() {
+    obstacles.forEach(obstacle => drawSquare(obstacle.x, obstacle.y, 'gray')); // Draw obstacles in gray
 }
 
 // Clear the canvas
@@ -117,16 +132,16 @@ function changeDirection(event) {
 
 // Food generation and consumption logic
 function generateFood() {
-    let newFood = {
-        x: Math.floor(Math.random() * TILE_COUNT),
-        y: Math.floor(Math.random() * TILE_COUNT)
-    };
-    // Check if food is on snake
-    for (let i = 0; i < snake.length; i++) {
-        if (newFood.x === snake[i].x && newFood.y === snake[i].y) {
-            generateFood(); // Regenerate food if it's on the snake
-            return;
-        }
+    let newFood;
+    let validFoodPosition = false;
+    while (!validFoodPosition) {
+        newFood = {
+            x: Math.floor(Math.random() * TILE_COUNT),
+            y: Math.floor(Math.random() * TILE_COUNT)
+        };
+        // Check if food is on snake or obstacles
+        validFoodPosition = !snake.some(segment => segment.x === newFood.x && segment.y === newFood.y) &&
+                            !obstacles.some(obs => obs.x === newFood.x && obs.y === newFood.y);
     }
     food = newFood;
 }
@@ -138,6 +153,48 @@ function drawFood() {
 function didEatFood() {
     const head = { x: snake[0].x, y: snake[0].y };
     return head.x === food.x && head.y === food.y;
+}
+
+// Obstacle generation logic
+function generateObstacles() {
+    obstacles = []; // Clear existing obstacles
+    if (snake.length > OBSTACLE_THRESHOLD) {
+        const numObstacles = Math.min(MAX_OBSTACLES, Math.floor(snake.length / 2)); // Scale with snake length
+        for (let i = 0; i < numObstacles; i++) {
+            let obstaclePosition;
+            let validPosition = false;
+            while (!validPosition) {
+                obstaclePosition = {
+                    x: Math.floor(Math.random() * TILE_COUNT),
+                    y: Math.floor(Math.random() * TILE_COUNT)
+                };
+                // Check if obstacle is on snake, food, or another obstacle
+                validPosition = !snake.some(segment => segment.x === obstaclePosition.x && segment.y === obstaclePosition.y) &&
+                                !(obstaclePosition.x === food.x && obstaclePosition.y === food.y) &&
+                                !obstacles.some(obs => obs.x === obstaclePosition.x && obs.y === obstaclePosition.y);
+            }
+            obstacles.push(obstaclePosition);
+        }
+    }
+}
+
+// Check for game over conditions
+function checkGameOver() {
+    // Check if snake hits itself
+    for (let i = 4; i < snake.length; i++) {
+        if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) return true;
+    }
+
+    // Check if snake hits wall
+    const hitLeftWall = snake[0].x < 0;
+    const hitRightWall = snake[0].x > TILE_COUNT - 1;
+    const hitTopWall = snake[0].y < 0;
+    const hitBottomWall = snake[0].y > TILE_COUNT - 1;
+
+    // Check if snake hits an obstacle
+    const hitObstacle = obstacles.some(obstacle => obstacle.x === snake[0].x && obstacle.y === snake[0].y);
+
+    return hitLeftWall || hitRightWall || hitTopWall || hitBottomWall || hitObstacle;
 }
 
 // Start the game
