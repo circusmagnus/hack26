@@ -3,7 +3,8 @@ import { BOARD_SIZE, CELL_SIZE, board } from './game.js';
 export function drawBoard(ctx) {
     for (let row = 0; row < BOARD_SIZE; row++) {
         for (let col = 0; col < BOARD_SIZE; col++) {
-            ctx.fillStyle = (row + col) % 2 === 0 ? '#FAF0E6' : '#8B4513'; // Light and dark squares
+            // Using my preferred colors for alternating squares
+            ctx.fillStyle = (row + col) % 2 === 0 ? '#F0D9B5' : '#B58863';
             ctx.fillRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
     }
