@@ -1,20 +1,39 @@
-import './style.css'
-import { drawBoard, drawPieces } from './rendering.js';
-import { CELL_SIZE, BOARD_SIZE } from './game.js'; // Import from game.js for canvas sizing
+
+import './style.css';
+import { drawPiece, drawBoard } from './rendering.js'; // Removed clearCanvas as it's not used here directly
+import { gameBoard, initializeBoard, BOARD_SIZE, CELL_SIZE } from './game.js';
+
+document.querySelector('#app').innerHTML = `
+  <div>
+    <h1>Red vs Green Checkers</h1>
+    <canvas id="gameCanvas"></canvas>
+  </div>
+`;
 
 document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('gameCanvas');
   const ctx = canvas.getContext('2d');
 
-  // Set canvas size dynamically based on board and cell size
-  canvas.width = CELL_SIZE * BOARD_SIZE;
-  canvas.height = CELL_SIZE * BOARD_SIZE;
+  // Set canvas dimensions based on game constants
+  canvas.width = BOARD_SIZE * CELL_SIZE;
+  canvas.height = BOARD_SIZE * CELL_SIZE;
 
-  function animate() {
-    drawBoard(ctx);
-    drawPieces(ctx); // This part comes from remote, likely for SCRUM-510/511
-    requestAnimationFrame(animate);
+  function drawAllPieces() {
+      for (let row = 0; row < BOARD_SIZE; row++) {
+          for (let col = 0; col < BOARD_SIZE; col++) {
+              const piece = gameBoard[row][col];
+              const centerX = col * CELL_SIZE + CELL_SIZE / 2;
+              const centerY = row * CELL_SIZE + CELL_SIZE / 2;
+              if (piece === 1) { // Red piece
+                  drawPiece(ctx, centerX, centerY, 'red');
+              } else if (piece === 2) { // Green piece
+                  drawPiece(ctx, centerX, centerY, 'green');
+              }
+          }
+      }
   }
 
-  animate(); // Start the animation loop
+  initializeBoard();
+  drawBoard(ctx);
+  drawAllPieces();
 });
