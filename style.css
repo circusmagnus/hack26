@@ -1,72 +1,103 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Child-friendly font */
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f0f0f0;
+    background-color: #ffe0b2; /* Warm, inviting background */
     margin: 0;
+    font-size: 1.2em; /* Slightly larger base font */
 }
 
 #calculator {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    background-color: #ffffff; /* Clean white background */
+    border-radius: 20px; /* More rounded corners for child-friendliness */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* More pronounced shadow */
+    padding: 30px; /* Increased padding */
+    border: 5px solid #ffcc80; /* Colorful border */
 }
 
 #display {
-    background-color: #eee;
-    padding: 10px;
-    margin-bottom: 10px;
+    background-color: #e3f2fd; /* Light blue display */
+    padding: 20px; /* Larger padding for display */
+    margin-bottom: 20px; /* More space below display */
     text-align: right;
-    font-size: 2em;
-    border-radius: 4px;
+    font-size: 3.5em; /* Significantly larger display font */
+    border-radius: 10px; /* Rounded display corners */
+    color: #333; /* Darker text for readability */
+    min-height: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .buttons {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 15px; /* Increased gap between buttons */
 }
 
 button {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5em;
+    width: 80px; /* Larger buttons */
+    height: 80px; /* Larger buttons */
+    font-size: 2.2em; /* Larger button text */
     border: none;
-    border-radius: 4px;
+    border-radius: 15px; /* More rounded button corners */
     cursor: pointer;
-    background-color: #e0e0e0;
+    background-color: #bbdefb; /* Light blue for number buttons */
+    color: #333; /* Dark text on light buttons */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1); /* Button shadow */
+    transition: all 0.2s ease; /* Smooth transition for hover effects */
 }
 
-button:hover {
-    background-color: #d0d0d0;
+button:active {
+    transform: translateY(2px); /* Click effect */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.number {
+    background-color: #81c784; /* Green for numbers */
+    color: #fff; /* White text for contrast */
+}
+
+.number:hover {
+    background-color: #66bb6a; /* Darker green on hover */
 }
 
 .operator {
-    background-color: #ff9500;
+    background-color: #ffb74d; /* Orange for operators */
     color: #fff;
 }
 
 .operator:hover {
-    background-color: #e08000;
+    background-color: #ffa726; /* Darker orange on hover */
 }
 
 .equals {
-    background-color: #007aff;
+    background-color: #64b5f6; /* Blue for equals */
     color: #fff;
+    grid-column: span 2; /* Make equals button wider */
+    width: auto; /* Adjust width for span */
 }
 
 .equals:hover {
-    background-color: #0060cc;
+    background-color: #42a5f5; /* Darker blue on hover */
 }
 
 .clear {
-    background-color: #ff3b30;
+    background-color: #ef9a9a; /* Red for clear */
     color: #fff;
 }
 
 .clear:hover {
-    background-color: #e02a20;
+    background-color: #e57373; /* Darker red on hover */
+}
+
+.decimal {
+    background-color: #81c784; /* Green for decimal, like numbers */
+    color: #fff;
+}
+
+.decimal:hover {
+    background-color: #66bb6a; /* Darker green on hover */
 }
