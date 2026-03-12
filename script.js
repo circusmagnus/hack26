@@ -1,5 +1,6 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+const gameStatusMessage = document.getElementById('game-status-message');
 
 const gridSize = 20; // Size of each snake segment and food item
 const tileCount = canvas.width / gridSize; // From HEAD, good to have
@@ -96,12 +97,8 @@ document.addEventListener('keydown', e => {
 // Main game loop
 function main() {
     if (gameOver) {
-        // Display Game Over message (will be refined in SCRUM-447)
-        ctx.fillStyle = 'black';
-        ctx.font = '30px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
-        return;
+        gameStatusMessage.innerText = 'Game Over!';
+        return; // Stop the game loop
     }
 
     changingDirection = false; // Reset for next game tick
