@@ -151,8 +151,8 @@ function getPossibleMoves(row, col) {
 function getAllLegalMovesForPlayer(player) {
     let allMoves = [];
     const playerPieces = getPlayerPieces(player);
-    for (const {row, col} of playerPieces) {
-        allMoves = allMoves.concat(getPossibleMoves(row, col));
+    for (let row_col_piece of playerPieces) {
+        allMoves = allMoves.concat(getPossibleMoves(row_col_piece.row, row_col_piece.col));
     }
 
     const mandatoryJumps = allMoves.filter(move => move.isJump);
