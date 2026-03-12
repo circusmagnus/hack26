@@ -15,6 +15,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 square.classList.add('light');
             } else {
                 square.classList.add('dark');
+
+                // Place pieces on dark squares
+                if (i < 3) {
+                    const piece = document.createElement('div');
+                    piece.classList.add('piece', 'red');
+                    square.appendChild(piece);
+                } else if (i > 4) {
+                    const piece = document.createElement('div');
+                    piece.classList.add('piece', 'green');
+                    square.appendChild(piece);
+                }
             }
             chessboard.appendChild(square);
         }

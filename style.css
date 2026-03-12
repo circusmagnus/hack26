@@ -26,6 +26,9 @@ h1 {
 .square {
     width: 60px;
     height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .light {
@@ -34,4 +37,19 @@ h1 {
 
 .dark {
     background-color: #b58863;
+}
+
+.piece {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    /* border: 2px solid #000; */ /* Optional: Add a border for better distinction */
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
 }
