@@ -2,6 +2,7 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const gridSize = 20;
+const tileCount = canvas.width / gridSize; // Added from my local branch as it's a good variable to have
 let snake = [{ x: 10, y: 10 }];
 let food = {};
 let direction = 'right';
@@ -10,8 +11,8 @@ let gameOver = false;
 
 function generateFood() {
     food = {
-        x: Math.floor(Math.random() * (canvas.width / gridSize)),
-        y: Math.floor(Math.random() * (canvas.height / gridSize))
+        x: Math.floor(Math.random() * tileCount), // Use tileCount here
+        y: Math.floor(Math.random() * tileCount)  // Use tileCount here
     };
 }
 
@@ -61,8 +62,8 @@ function update() {
     }
 
     // Basic collision detection (walls) - more detailed collision will be in SCRUM-445
-    if (head.x < 0 || head.x >= canvas.width / gridSize ||
-        head.y < 0 || head.y >= canvas.height / gridSize) {
+    if (head.x < 0 || head.x >= tileCount ||
+        head.y < 0 || head.y >= tileCount) {
         gameOver = true;
     }
 
@@ -86,5 +87,11 @@ document.addEventListener('keydown', e => {
     }
 });
 
+// Game loop function using requestAnimationFrame for smoother animation
+function gameLoop() {
+    update(); // Call the update logic
+    requestAnimationFrame(gameLoop);
+}
+
 generateFood(); // Initial food generation
-setInterval(update, 100);
+requestAnimationFrame(gameLoop); // Start the game loop
