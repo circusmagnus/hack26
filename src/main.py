@@ -1,0 +1,1 @@
+print("Checkers Game Placeholder")
