@@ -3,16 +3,39 @@ import {
 } from 'react'
 import './App.css'
 
+function Piece({
+  player
+}) {
+  return <div className={`piece ${player}`}></div>;
+}
+
 function App() {
   const [board, setBoard] = useState(() => {
     const initialBoard = [];
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
+        const color = (i + j) % 2 === 0 ? 'white' : 'black';
+        let piece = null;
+
+        if (color === 'black') {
+          if (i < 3) {
+            piece = {
+              player: 'red',
+              isKing: false
+            };
+          } else if (i > 4) {
+            piece = {
+              player: 'black',
+              isKing: false
+            };
+          }
+        }
+
         initialBoard.push({
           row: i,
           col: j,
-          color: (i + j) % 2 === 0 ? 'white' : 'black',
-          piece: null,
+          color: color,
+          piece: piece,
         });
       }
     }
@@ -34,7 +57,7 @@ function App() {
 
   return (
     <>
-      <h1>Current Turn: {turn.toUpperCase()}</h1>
+      <h1>Checkers Game - Current Turn: {turn.toUpperCase()}</h1>
       <div id="checkerboard" className="checkerboard">
         {board.map((square, index) => (
           <div
@@ -42,7 +65,7 @@ function App() {
             className={`square ${square.color}`}
             // onClick={() => handleMove(index, 'some_other_index')} // Placeholder for now
           >
-            {/* Pieces will be rendered here later */}
+            {square.piece && <Piece player={square.piece.player} />}
           </div>
         ))}
       </div>
