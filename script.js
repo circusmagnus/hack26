@@ -3,22 +3,22 @@ const ctx = canvas.getContext('2d');
 const gameStatusMessage = document.getElementById('game-status-message');
 
 const gridSize = 20; // Size of each snake segment and food item
-const tileCount = canvas.width / gridSize; // From HEAD, good to have
+const tileCount = canvas.width / gridSize; // Number of tiles in a row/column
+
 let snake = [{ x: 10 * gridSize, y: 10 * gridSize }]; // Initial snake position (head)
 let food = {}; // Food position, will be generated
-let dx = gridSize; // Horizontal velocity
-let dy = 0; // Vertical velocity
+let dx = gridSize; // Horizontal velocity (remote's approach)
+let dy = 0; // Vertical velocity (remote's approach)
 let score = 0;
 let gameOver = false;
 let changingDirection = false; // To prevent multiple direction changes per game tick
 
 // Generate initial food position
 function generateFood() {
-    // Ensure food does not spawn on the snake (My previous logic)
     let newFoodX, newFoodY;
     do {
-        newFoodX = Math.floor(Math.random() * tileCount) * gridSize; // Using tileCount and gridSize
-        newFoodY = Math.floor(Math.random() * tileCount) * gridSize; // Using tileCount and gridSize
+        newFoodX = Math.floor(Math.random() * tileCount) * gridSize;
+        newFoodY = Math.floor(Math.random() * tileCount) * gridSize;
     } while (snake.some(segment => segment.x === newFoodX && segment.y === newFoodY));
     food = { x: newFoodX, y: newFoodY };
 }
@@ -41,10 +41,26 @@ function drawFood() {
     drawRect(food.x, food.y, 'red');
 }
 
-// Move the snake
+// Move the snake and handle collisions
 function moveSnake() {
     // Create the new head
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+    // Collision detection
+    // 1. Canvas borders
+    if (head.x < 0 || head.x >= canvas.width ||
+        head.y < 0 || head.y >= canvas.height) {
+        gameOver = true;
+        return;
+    }
+
+    // 2. Self-collision
+    for (let i = 1; i < snake.length; i++) {
+        if (head.x === snake[i].x && head.y === snake[i].y) {
+            gameOver = true;
+            return;
+        }
+    }
 
     // Add the new head to the beginning of the snake array
     snake.unshift(head);
@@ -95,7 +111,7 @@ document.addEventListener('keydown', e => {
 });
 
 // Main game loop
-function main() {
+function gameTick() { // Renamed from main to gameTick for clarity
     if (gameOver) {
         gameStatusMessage.innerText = 'Game Over!';
         return; // Stop the game loop
@@ -103,35 +119,19 @@ function main() {
 
     changingDirection = false; // Reset for next game tick
 
-    setTimeout(function onTick() {
+    setTimeout(function onTick() { 
         ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
 
         drawFood();
-        moveSnake();
+        moveSnake(); // This now includes collision detection
         drawSnake();
 
-        // Basic collision detection with walls
-        const head = snake[0];
-        const hitLeftWall = head.x < 0;
-        const hitRightWall = head.x >= canvas.width;
-        const hitTopWall = head.y < 0;
-        const hitBottomWall = head.y >= canvas.height;
-
-        if (hitLeftWall || hitRightWall || hitTopWall || hitBottomWall) {
-            gameOver = true;
+        // Check if game is over after moveSnake, before the next tick
+        if (!gameOver) {
+            gameTick(); // Call gameTick again if game is not over
         }
-
-        // Self-collision
-        for (let i = 4; i < snake.length; i++) { // Start from 4 to prevent immediate self-collision at start
-            if (head.x === snake[i].x && head.y === snake[i].y) {
-                gameOver = true;
-                break;
-            }
-        }
-
-        main(); // Call main again
     }, 100); // Game speed
 }
 
 generateFood(); // Initial food generation
-main(); // Start the game
+gameTick(); // Start the game loop
