@@ -1,18 +1,29 @@
-// Get the canvas element
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Define canvas dimensions
-const CANVAS_WIDTH = 400;
-const CANVAS_HEIGHT = 400;
+// Game settings
+const gridSize = 20;
+const canvasWidth = 400;
+const canvasHeight = 400;
 
-// Set canvas dimensions
-canvas.width = CANVAS_WIDTH;
-canvas.height = CANVAS_HEIGHT;
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
 
-// Set canvas background color
-const CANVAS_BACKGROUND_COLOR = '#ADD8E6'; // Light blue
-ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
-ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+// Snake object
+let snake = [
+    { x: 10 * gridSize, y: 10 * gridSize }, // Head of the snake
+    { x: 9 * gridSize, y: 10 * gridSize },
+    { x: 8 * gridSize, y: 10 * gridSize }
+];
 
-console.log('Canvas initialized and background set.');
+const drawSnake = () => {
+    snake.forEach(segment => {
+        ctx.fillStyle = 'green';
+        ctx.fillRect(segment.x, segment.y, gridSize, gridSize);
+        ctx.strokeStyle = 'darkgreen';
+        ctx.strokeRect(segment.x, segment.y, gridSize, gridSize);
+    });
+};
+
+// Initial drawing
+drawSnake();
