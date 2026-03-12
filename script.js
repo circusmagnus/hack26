@@ -32,19 +32,19 @@ function generateFood() {
 // Draw a single snake segment or food item
 function drawRect(x, y, color) {
     ctx.fillStyle = color;
-    ctx.strokeStyle = 'darkgreen';
+    ctx.strokeStyle = '#333'; // Darker stroke for contrast
     ctx.fillRect(x, y, gridSize, gridSize);
     ctx.strokeRect(x, y, gridSize, gridSize);
 }
 
 // Draw the snake
 function drawSnake() {
-    snake.forEach(segment => drawRect(segment.x, segment.y, 'lightgreen'));
+    snake.forEach(segment => drawRect(segment.x, segment.y, '#00FF00')); // Bright green for snake
 }
 
 // Draw the food
 function drawFood() {
-    drawRect(food.x, food.y, 'red');
+    drawRect(food.x, food.y, '#FFD700'); // Gold for food
 }
 
 // Move the snake and handle collisions (Adopted Athos's approach)
