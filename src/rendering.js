@@ -1,32 +1,36 @@
-
-import { BOARD_SIZE, CELL_SIZE } from './game.js';
-
-export function drawPiece(ctx, x, y, color) {
-    const PIECE_RADIUS = 20;
-    ctx.beginPath();
-    ctx.arc(x, y, PIECE_RADIUS, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.strokeStyle = 'black';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-}
-
-export function clearCanvas(ctx, canvas) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
+import { BOARD_SIZE, CELL_SIZE, board, selectedPiece } from './game.js';
 
 export function drawBoard(ctx) {
     for (let row = 0; row < BOARD_SIZE; row++) {
         for (let col = 0; col < BOARD_SIZE; col++) {
-            ctx.fillStyle = (row + col) % 2 === 0 ? '#F0D9B5' : '#B58863';
+            ctx.fillStyle = (row + col) % 2 === 0 ? '#F0D9B5' : '#B58863'; // Light and dark squares
             ctx.fillRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
         }
     }
 }
 
-export function highlightSelectedPiece(ctx, row, col) {
-    ctx.strokeStyle = 'yellow'; // Highlight color
-    ctx.lineWidth = 4;
-    ctx.strokeRect(col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+export function drawPieces(ctx) {
+    for (let row = 0; row < BOARD_SIZE; row++) {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+            const piece = board[row][col];
+            if (piece) {
+                const x = col * CELL_SIZE + CELL_SIZE / 2;
+                const y = row * CELL_SIZE + CELL_SIZE / 2;
+                const radius = CELL_SIZE / 3;
+
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = piece.player === 'red' ? 'red' : 'green';
+                ctx.fill();
+                ctx.closePath();
+
+                // Draw highlight if this piece is selected
+                if (selectedPiece && selectedPiece.row === row && selectedPiece.col === col) {
+                    ctx.strokeStyle = 'yellow'; // Highlight color
+                    ctx.lineWidth = 4;
+                    ctx.stroke();
+                }
+            }
+        }
+    }
 }
