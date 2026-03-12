@@ -1,13 +1,90 @@
 body {
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background-color: #f0f0f0;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.game {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.game-info {
+  margin-bottom: 20px;
+}
+
+.game-info p {
+  margin: 5px 0;
+  font-size: 1.1em;
+}
+
+.game-board {
+  margin: 20px 0;
+}
+
+.board-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 5px;
+  width: 315px; /* 3*100 + 2*5 */
+  height: 315px; /* 3*100 + 2*5 */
+  margin: 0 auto;
+  border: 1px solid #ccc;
+}
+
+.square {
+  width: 100px;
+  height: 100px;
+  background-color: #eee;
+  border: 1px solid #ddd;
+  font-size: 2.5em;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.square:hover {
+  background-color: #e0e0e0;
+}
+
+.square:focus {
+  outline: none;
+}
+
+.game-status {
+  margin-top: 20px;
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #555;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  margin-top: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
 }
