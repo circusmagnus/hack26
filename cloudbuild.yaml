@@ -18,7 +18,7 @@ steps:
   - push
   - ${_ARTIFACT_REPO_URL}/demo
   - --all-tags
-- id: update-job
+- id: deploy
   name: gcr.io/cloud-builders/gcloud
   automapSubstitutions: true
   entrypoint: bash
@@ -28,9 +28,11 @@ steps:
   - '-c'
   - |-
     IMAGE_TAG=${SHORT_SHA}
-    gcloud run jobs update demo \
+    gcloud run deploy demo \
+      --image ${_ARTIFACT_REPO_URL}/demo:$${IMAGE_TAG} \
+      --port=8080 \
       --region ${_REGION} \
-      --image ${_ARTIFACT_REPO_URL}/demo:$${IMAGE_TAG}
+      --project ${_PROJECT_ID}
 options:
   logging: CLOUD_LOGGING_ONLY
 serviceAccount: ${_SA_EMAIL}
