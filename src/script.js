@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const performCalculation = {
         '+': (firstOperand, secondOperand) => firstOperand + secondOperand,
+        '-': (firstOperand, secondOperand) => firstOperand - secondOperand,
         '=': (firstOperand, secondOperand) => secondOperand // For equals, just return the second operand if no prior operator
     };
 
