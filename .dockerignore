@@ -1,0 +1,7 @@
+# Exclude version control and build system files
+.git
+.gitignore
+cloudbuild.yaml
+
+# Exclude Docker-related files
+Dockerfile
