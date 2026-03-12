@@ -1,4 +1,3 @@
-
 // Game logic will go here
 
 const BOARD_SIZE = 8;
@@ -55,7 +54,8 @@ function renderBoard() {
                 piece.classList.add('piece');
                 if (pieceType === RED_PIECE || pieceType === RED_KING) {
                     piece.classList.add('red');
-                } else if (pieceType === GREEN_PIECE || pieceType === GREEN_KING) {
+                }
+                else if (pieceType === GREEN_PIECE || pieceType === GREEN_KING) {
                     piece.classList.add('green');
                 }
                 if (pieceType === RED_KING || pieceType === GREEN_KING) {
@@ -88,7 +88,8 @@ function getPlayerPieces(player) {
             const piece = board[row][col];
             if (player === PLAYER_RED && isRed(piece)) {
                 pieces.push({row, col, piece});
-            } else if (player === PLAYER_GREEN && isGreen(piece)) {
+            }
+            else if (player === PLAYER_GREEN && isGreen(piece)) {
                 pieces.push({row, col, piece});
             }
         }
@@ -158,7 +159,8 @@ function getAllLegalMovesForPlayer(player) {
 
     if (mandatoryJumps.length > 0) {
         return mandatoryJumps; // If jumps are available, they are mandatory
-    } else {
+    }
+    else {
         return allMoves; // Otherwise, all non-jump moves are legal
     }
 }
@@ -171,7 +173,8 @@ function makeMove(startRow, startCol, endRow, endCol, jumpedPiecePos = null) {
     // Handle kinging
     if (isRed(piece) && endRow === BOARD_SIZE - 1) {
         board[endRow][endCol] = RED_KING;
-    } else if (isGreen(piece) && endRow === 0) {
+    }
+    else if (isGreen(piece) && endRow === 0) {
         board[endRow][endCol] = GREEN_KING;
     }
 
@@ -199,7 +202,8 @@ function makeComputerMove() {
     if (legalMoves.length > 0) {
         const randomMove = legalMoves[Math.floor(Math.random() * legalMoves.length)];
         makeMove(randomMove.start.row, randomMove.start.col, randomMove.end.row, randomMove.end.col, randomMove.jumped);
-    } else {
+    }
+    else {
         console.log('Computer has no moves! Game over or stalemate.');
         // TODO: Implement win/loss condition checking
     }
