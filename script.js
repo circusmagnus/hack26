@@ -31,6 +31,7 @@ document.addEventListener('keydown', changeDirection);
 
 // Main game loop
 function main() {
+    generateFood(); // Generate initial food
     gameInterval = setInterval(gameTick, GAME_SPEED);
 }
 
@@ -38,6 +39,7 @@ function main() {
 function gameTick() {
     changingDirection = false;
     clearCanvas();
+    drawFood(); // Draw food
     moveSnake();
     drawSnake();
 }
@@ -69,8 +71,14 @@ function moveSnake() {
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
     // Add the new head to the beginning of the snake array
     snake.unshift(head);
-    // Remove the tail (for now, until food is implemented)
-    snake.pop();
+
+    const didEat = didEatFood();
+    if (didEat) {
+        score += 10;
+        generateFood();
+    } else {
+        snake.pop(); // Remove the tail only if no food was eaten
+    }
 }
 
 // Change snake direction based on keyboard input
@@ -105,6 +113,31 @@ function changeDirection(event) {
         dx = 0;
         dy = 1;
     }
+}
+
+// Food generation and consumption logic
+function generateFood() {
+    let newFood = {
+        x: Math.floor(Math.random() * TILE_COUNT),
+        y: Math.floor(Math.random() * TILE_COUNT)
+    };
+    // Check if food is on snake
+    for (let i = 0; i < snake.length; i++) {
+        if (newFood.x === snake[i].x && newFood.y === snake[i].y) {
+            generateFood(); // Regenerate food if it's on the snake
+            return;
+        }
+    }
+    food = newFood;
+}
+
+function drawFood() {
+    drawSquare(food.x, food.y, 'red');
+}
+
+function didEatFood() {
+    const head = { x: snake[0].x, y: snake[0].y };
+    return head.x === food.x && head.y === food.y;
 }
 
 // Start the game
