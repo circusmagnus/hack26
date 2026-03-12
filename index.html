@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake Game for Kids</title>
+    <title>Kid's Snake Game</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Snake Game</h1>
+    <h1>Kid's Snake Game</h1>
     <div id="scoreDisplay">Score: 0</div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
-    <div id="game-status-message"></div>
+    <div class="controls">
+        <button id="startButton">Start Game</button>
+        <button id="restartButton" style="display:none;">Restart Game</button>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

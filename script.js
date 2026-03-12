@@ -1,26 +1,23 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const scoreDisplay = document.getElementById('scoreDisplay'); // Get score display element
-const gameStatusMessage = document.getElementById('game-status-message'); // From HEAD (Aramis's work)
+const startButton = document.getElementById('startButton');
+const restartButton = document.getElementById('restartButton');
+const scoreDisplay = document.getElementById('scoreDisplay'); // Added from HEAD
 
-const gridSize = 20; // Size of each snake segment and food item
-const tileCount = canvas.width / gridSize; // Number of tiles in a row/column
-let snake = [{ x: 10 * gridSize, y: 10 * gridSize }]; // Initial snake position (head)
-let food = {}; // Food position, will be generated
-let dx = gridSize; // Horizontal velocity
-let dy = 0; // Vertical velocity
+const gridSize = 20;
+const tileCount = canvas.width / gridSize;
+
+let snake = [{ x: 10 * gridSize, y: 10 * gridSize }];
+let food = {};
+let dx = gridSize;
+let dy = 0;
 let score = 0;
-let gameOver = false;
-let changingDirection = false; // To prevent multiple direction changes per game tick
+let gameOver = true; // Initialized to true to wait for start
+let changingDirection = false;
+let gameInterval; // To store the setTimeout reference for clearing
 
-// Function to update the score display
-function updateScoreDisplay() {
-    scoreDisplay.textContent = `Score: ${score}`;
-}
-
-// Generate initial food position
+// --- Game Logic Functions ---
 function generateFood() {
-    // Ensure food does not spawn on the snake
     let newFoodX, newFoodY;
     do {
         newFoodX = Math.floor(Math.random() * tileCount) * gridSize;
@@ -29,7 +26,6 @@ function generateFood() {
     food = { x: newFoodX, y: newFoodY };
 }
 
-// Draw a single snake segment or food item
 function drawRect(x, y, color) {
     ctx.fillStyle = color;
     ctx.strokeStyle = '#333'; // Darker stroke for contrast
@@ -37,53 +33,49 @@ function drawRect(x, y, color) {
     ctx.strokeRect(x, y, gridSize, gridSize);
 }
 
-// Draw the snake
 function drawSnake() {
     snake.forEach(segment => drawRect(segment.x, segment.y, '#00FF00')); // Bright green for snake
 }
 
-// Draw the food
 function drawFood() {
     drawRect(food.x, food.y, '#FFD700'); // Gold for food
 }
 
-// Move the snake and handle collisions (Adopted Athos's approach)
+function updateScoreDisplay() { // From HEAD
+    scoreDisplay.textContent = `Score: ${score}`;
+}
+
 function moveSnake() {
-    // Create the new head
     const head = { x: snake[0].x + dx, y: snake[0].y + dy };
 
-    // Collision detection
-    // 1. Canvas borders
+    // Collision with Canvas borders
     if (head.x < 0 || head.x >= canvas.width ||
         head.y < 0 || head.y >= canvas.height) {
         gameOver = true;
-        return; // Stop further movement logic if game is over
+        return;
     }
 
-    // 2. Self-collision (Athos's starting from i=1 is correct)
+    // Self-collision
     for (let i = 1; i < snake.length; i++) {
         if (head.x === snake[i].x && head.y === snake[i].y) {
             gameOver = true;
-            return; // Stop further movement logic if game is over
+            return;
         }
     }
 
-    // Add the new head to the beginning of the snake array
     snake.unshift(head);
 
-    // Check if snake ate food
     const didEatFood = head.x === food.x && head.y === food.y;
     if (didEatFood) {
         score += 10;
-        generateFood(); // Generate new food
-        updateScoreDisplay(); // Update score display when food is eaten
+        generateFood();
+        updateScoreDisplay(); // Update score after eating food
     } else {
-        // Remove the tail if no food was eaten
         snake.pop();
     }
 }
 
-// Handle keyboard input
+// --- Event Listeners for Keyboard ---
 document.addEventListener('keydown', e => {
     if (gameOver) return;
     if (changingDirection) return;
@@ -95,52 +87,76 @@ document.addEventListener('keydown', e => {
     const goingLeft = dx === -gridSize;
     const goingRight = dx === gridSize;
 
-    // Up arrow
     if (keyPressed === 38 && !goingDown) {
         dx = 0;
         dy = -gridSize;
     }
-    // Down arrow
     if (keyPressed === 40 && !goingUp) {
         dx = 0;
         dy = gridSize;
     }
-    // Left arrow
     if (keyPressed === 37 && !goingRight) {
         dx = -gridSize;
         dy = 0;
     }
-    // Right arrow
     if (keyPressed === 39 && !goingLeft) {
         dx = gridSize;
         dy = 0;
     }
 });
 
-// Main game loop (Renamed to gameTick from HEAD, kept my setTimeout logic with added gameTick call)
+// --- Game Control Functions ---
+function startGame() {
+    gameOver = false;
+    score = 0;
+    snake = [{ x: 10 * gridSize, y: 10 * gridSize }];
+    dx = gridSize;
+    dy = 0;
+    changingDirection = false;
+
+    startButton.style.display = 'none';
+    restartButton.style.display = 'none';
+    
+    updateScoreDisplay(); // Reset score display
+    generateFood();
+    gameTick(); // Start the game loop
+}
+
 function gameTick() {
     if (gameOver) {
-        gameStatusMessage.innerText = 'Game Over!'; // Using Aramis's element
-        return; // Stop the game loop
+        ctx.fillStyle = 'black';
+        ctx.font = '30px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
+        restartButton.style.display = 'block'; // Show restart button
+        return;
     }
 
     changingDirection = false;
 
-    setTimeout(function onTick() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+    gameInterval = setTimeout(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawFood();
-        moveSnake(); // This now includes collision detection
+        moveSnake();
         drawSnake();
-        updateScoreDisplay(); // Update score display in each frame
+        updateScoreDisplay(); // Update score display in each frame (Porthos's feature)
 
-        // Call gameTick again if game is not over (Integrated Athos's if check)
         if (!gameOver) {
             gameTick();
         }
-    }, 100); // Game speed
+    }, 100);
 }
 
-generateFood(); // Initial food generation
-updateScoreDisplay(); // Initial display of score
-gameTick(); // Start the game loop
+// --- Initial Setup & Event Listeners ---
+startButton.addEventListener('click', startGame);
+restartButton.addEventListener('click', startGame);
+
+// Clear canvas and draw a start message initially
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.fillStyle = 'black';
+ctx.font = '20px Arial';
+ctx.textAlign = 'center';
+ctx.fillText('Press "Start Game" to begin', canvas.width / 2, canvas.height / 2);
+startButton.style.display = 'block'; // Ensure start button is visible initially
+updateScoreDisplay(); // Display initial score (0)
