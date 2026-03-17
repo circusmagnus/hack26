@@ -72,6 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const armorDifference = enemyArmor - armorPiercing;
             effectiveDamagePerHit *= (1 - (armorDifference * 0.1)); // 10% reduction per point
         }
+        
+        // Ensure effectiveDamagePerHit is not negative
+        if (effectiveDamagePerHit < 0) effectiveDamagePerHit = 0;
 
         for (let i = 0; i < numModels; i++) {
             for (let j = 0; j < numAttacks; j++) {
@@ -84,6 +87,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return totalDamage;
+    }
+
+    const NUM_SIMULATIONS = 10000; // Number of simulations for calculating average damage
+
+    function calculateAverageSquadDamage(
+        numModels,
+        damagePerModel,
+        numAttacks,
+        accuracy,
+        optimalDistance,
+        accuracyFalloff,
+        distanceToEnemy,
+        armorPiercing,
+        enemyArmor
+    ) {
+        let sumOfDamages = 0;
+        for (let i = 0; i < NUM_SIMULATIONS; i++) {
+            sumOfDamages += calculateSquadDamage(
+                numModels,
+                damagePerModel,
+                numAttacks,
+                accuracy,
+                optimalDistance,
+                accuracyFalloff,
+                distanceToEnemy,
+                armorPiercing,
+                enemyArmor
+            );
+        }
+        return Math.floor(sumOfDamages / NUM_SIMULATIONS);
     }
 
     // Event listener for squad name input changes
@@ -106,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const armorPiercing = parseInt(document.getElementById('armorPiercing').value);
         const enemyArmor = parseInt(document.getElementById('enemyArmor').value);
 
-        const calculatedDamage = calculateSquadDamage(
+        const averageCalculatedDamage = calculateAverageSquadDamage(
             numModels,
             damagePerModel,
             numAttacks,
@@ -118,9 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
             enemyArmor
         );
 
-        totalDamageDisplay.textContent = calculatedDamage;
+        totalDamageDisplay.textContent = averageCalculatedDamage;
 
-        console.log('Damage calculated and data saved for:', squadNameInput.value);
+        console.log('Average Damage calculated and data saved for:', squadNameInput.value);
     });
 
     // Initial load in case user navigates back and squad name is pre-filled by browser
