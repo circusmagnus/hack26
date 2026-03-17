@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Battlesector Squad Damage Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Battlesector Squad Damage Calculator</h1>
+        <form id="damageCalculatorForm">
+            <div class="input-group">
+                <label for="squadName">Squad Name:</label>
+                <input type="text" id="squadName" required>
+            </div>
+            <div class="input-group">
+                <label for="numModels">Number of Models:</label>
+                <input type="number" id="numModels" required>
+            </div>
+            <div class="input-group">
+                <label for="damage">Damage (per hit):</label>
+                <input type="number" id="damage" required>
+            </div>
+            <div class="input-group">
+                <label for="numAttacks">Number of Attacks (per model):</label>
+                <input type="number" id="numAttacks" required>
+            </div>
+            <div class="input-group">
+                <label for="accuracy">Accuracy (%):</label>
+                <input type="number" id="accuracy" required>
+            </div>
+            <div class="input-group">
+                <label for="optimalDistance">Optimal Distance:</label>
+                <input type="number" id="optimalDistance" required>
+            </div>
+            <div class="input-group">
+                <label for="accuracyFalloff">Accuracy Falloff (% per tile):</label>
+                <input type="number" id="accuracyFalloff" required>
+            </div>
+            <div class="input-group">
+                <label for="distanceToEnemy">Distance to Enemy:</label>
+                <input type="number" id="distanceToEnemy" required>
+            </div>
+            <div class="input-group">
+                <label for="armorPiercing">Armor Piercing:</label>
+                <input type="number" id="armorPiercing" required>
+            </div>
+            <div class="input-group">
+                <label for="enemyArmor">Enemy Armor:</label>
+                <input type="number" id="enemyArmor" required>
+            </div>
+            <button type="submit" id="calculateButton">Calculate Damage</button>
+        </form>
+        <div id="result">
+            <!-- Damage calculation result will be displayed here -->
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
