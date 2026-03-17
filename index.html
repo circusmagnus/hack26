@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,51 +10,42 @@
 <body>
     <div class="container">
         <h1>Battlesector Squad Damage Calculator</h1>
-        <form id="damage-calculator-form">
-            <div class="input-group">
-                <label for="squadName">Squad Name:</label>
-                <input type="text" id="squadName" name="squadName" required>
-            </div>
-            <div class="input-group">
-                <label for="numberOfModels">Number of Models:</label>
-                <input type="number" id="numberOfModels" name="numberOfModels" value="1" min="1" required>
-            </div>
-            <div class="input-group">
-                <label for="damage">Damage per Hit:</label>
-                <input type="number" id="damage" name="damage" value="1" min="1" required>
-            </div>
-            <div class="input-group">
-                <label for="numberOfAttacks">Number of Attacks per Model:</label>
-                <input type="number" id="numberOfAttacks" name="numberOfAttacks" value="1" min="1" required>
-            </div>
-            <div class="input-group">
-                <label for="accuracy">Accuracy (%):</label>
-                <input type="number" id="accuracy" name="accuracy" value="100" min="0" max="100" required>
-            </div>
-            <div class="input-group">
-                <label for="optimalDistance">Optimal Distance (tiles):</label>
-                <input type="number" id="optimalDistance" name="optimalDistance" value="1" min="0" required>
-            </div>
-            <div class="input-group">
-                <label for="accuracyFalloff">Accuracy Falloff (% per tile):</label>
-                <input type="number" id="accuracyFalloff" name="accuracyFalloff" value="0" min="0" max="100" required>
-            </div>
-            <div class="input-group">
-                <label for="distanceToEnemy">Distance to Enemy (tiles):</label>
-                <input type="number" id="distanceToEnemy" name="distanceToEnemy" value="1" min="0" required>
-            </div>
-            <div class="input-group">
-                <label for="armorPiercing">Armor Piercing:</label>
-                <input type="number" id="armorPiercing" name="armorPiercing" value="0" min="0" required>
-            </div>
-            <div class="input-group">
-                <label for="enemyArmor">Enemy Armor:</label>
-                <input type="number" id="enemyArmor" name="enemyArmor" value="0" min="0" required>
-            </div>
-            <button type="submit">Calculate Damage</button>
-        </form>
-        <div id="result" class="result">
-            <!-- Damage output will be displayed here -->
+        <div class="calculator-form">
+            <label for="squadName">Squad Name:</label>
+            <input type="text" id="squadName" value="My Squad"><br><br>
+
+            <label for="numModels">Number of Models:</label>
+            <input type="number" id="numModels" value="5"><br><br>
+
+            <label for="damage">Damage per Model:</label>
+            <input type="number" id="damage" value="10"><br><br>
+
+            <label for="numAttacks">Number of Attacks per Model:</label>
+            <input type="number" id="numAttacks" value="2"><br><br>
+
+            <label for="accuracy">Accuracy (%):</label>
+            <input type="number" id="accuracy" value="75"><br><br>
+
+            <label for="optimalDistance">Optimal Distance:</label>
+            <input type="number" id="optimalDistance" value="10"><br><br>
+
+            <label for="accuracyFalloff">Accuracy Falloff per Tile (%):</label>
+            <input type="number" id="accuracyFalloff" value="5"><br><br>
+
+            <label for="distanceToEnemy">Distance to Enemy:</label>
+            <input type="number" id="distanceToEnemy" value="10"><br><br>
+
+            <label for="armorPiercing">Armor Piercing:</label>
+            <input type="number" id="armorPiercing" value="3"><br><br>
+
+            <label for="enemyArmor">Enemy Armor:</label>
+            <input type="number" id="enemyArmor" value="5"><br><br>
+
+            <button onclick="calculateDamage()">Calculate Damage</button>
+        </div>
+        <div class="result">
+            <h2>Calculated Damage:</h2>
+            <p id="totalDamage">0</p>
         </div>
     </div>
     <script src="script.js"></script>

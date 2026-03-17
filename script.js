@@ -1,35 +1,34 @@
+
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('damageCalculatorForm');
-    const resultDiv = document.getElementById('result'); // From remote
-    const squadNameInput = document.getElementById('squadName'); // From my changes
-    const inputFields = form.querySelectorAll('input[type="number"]'); // From my changes
+    const form = document.querySelector('.calculator-form'); // Use class to target the div
+    const totalDamageDisplay = document.getElementById('totalDamage'); // For displaying result
+    const squadNameInput = document.getElementById('squadName');
+    
+    // Using a simple in-memory object for session persistence as discussed in tech stack for SCRUM-554.
+    // This will be cleared on page refresh, but persists for the current session for quick re-entry.
+    let sessionSquadData = {}; 
 
-    let savedSquadsData = JSON.parse(sessionStorage.getItem('battlesectorSquads')) || {}; // From my changes
-
-    // Function to save current form data (from my changes)
     const saveFormData = () => {
         const squadName = squadNameInput.value.trim();
         if (squadName) {
-            const currentData = {};
-            currentData.numModels = document.getElementById('numModels').value;
-            currentData.damage = document.getElementById('damage').value;
-            currentData.numAttacks = document.getElementById('numAttacks').value;
-            currentData.accuracy = document.getElementById('accuracy').value;
-            currentData.optimalDistance = document.getElementById('optimalDistance').value;
-            currentData.accuracyFalloff = document.getElementById('accuracyFalloff').value;
-            currentData.distanceToEnemy = document.getElementById('distanceToEnemy').value;
-            currentData.armorPiercing = document.getElementById('armorPiercing').value;
-            currentData.enemyArmor = document.getElementById('enemyArmor').value;
-
-            savedSquadsData[squadName] = currentData;
-            sessionStorage.setItem('battlesectorSquads', JSON.stringify(savedSquadsData));
+            const currentData = {
+                numModels: document.getElementById('numModels').value,
+                damage: document.getElementById('damage').value,
+                numAttacks: document.getElementById('numAttacks').value,
+                accuracy: document.getElementById('accuracy').value,
+                optimalDistance: document.getElementById('optimalDistance').value,
+                accuracyFalloff: document.getElementById('accuracyFalloff').value,
+                distanceToEnemy: document.getElementById('distanceToEnemy').value,
+                armorPiercing: document.getElementById('armorPiercing').value,
+                enemyArmor: document.getElementById('enemyArmor').value,
+            };
+            sessionSquadData[squadName] = currentData;
         }
     };
 
-    // Function to load form data based on squad name (from my changes)
     const loadFormData = (squadName) => {
-        if (savedSquadsData[squadName]) {
-            const data = savedSquadsData[squadName];
+        if (sessionSquadData[squadName]) {
+            const data = sessionSquadData[squadName];
             document.getElementById('numModels').value = data.numModels;
             document.getElementById('damage').value = data.damage;
             document.getElementById('numAttacks').value = data.numAttacks;
@@ -40,20 +39,18 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('armorPiercing').value = data.armorPiercing;
             document.getElementById('enemyArmor').value = data.enemyArmor;
         } else {
-            // Clear number inputs if no saved data for the squad
-            inputFields.forEach(input => {
-                if (input.id !== 'squadName') { // Don't clear squad name itself
-                    input.value = '';
-                }
+            // Clear number inputs if no saved data for the squad, set to default if needed or just empty
+            const inputIds = ['numModels', 'damage', 'numAttacks', 'accuracy', 'optimalDistance', 'accuracyFalloff', 'distanceToEnemy', 'armorPiercing', 'enemyArmor'];
+            inputIds.forEach(id => {
+                document.getElementById(id).value = ''; // Clear or set to default
             });
         }
     };
 
-    // Function to calculate squad damage (from remote changes)
     function calculateSquadDamage(
         numModels,
-        damagePerHit,
-        numAttacksPerModel,
+        damagePerModel,
+        numAttacks,
         accuracy,
         optimalDistance,
         accuracyFalloff,
@@ -63,27 +60,25 @@ document.addEventListener('DOMContentLoaded', () => {
     ) {
         let totalDamage = 0;
 
-        // Calculate adjusted accuracy
-        let distanceDifference = Math.abs(optimalDistance - distanceToEnemy);
-        let adjustedAccuracy = accuracy - (distanceDifference * accuracyFalloff);
+        // Adjust accuracy based on distance
+        const distanceDifference = Math.abs(distanceToEnemy - optimalDistance);
+        accuracy -= distanceDifference * accuracyFalloff;
+        if (accuracy < 0) accuracy = 0; // Accuracy cannot be negative
+        if (accuracy > 100) accuracy = 100; // Accuracy cannot exceed 100
 
-        // Ensure accuracy doesn't go below 0 or above 100
-        adjustedAccuracy = Math.max(0, Math.min(100, adjustedAccuracy));
+        // Calculate damage reduction due to enemy armor
+        let effectiveDamagePerHit = damagePerModel;
+        if (enemyArmor > armorPiercing) {
+            const armorDifference = enemyArmor - armorPiercing;
+            effectiveDamagePerHit *= (1 - (armorDifference * 0.1)); // 10% reduction per point
+        }
 
         for (let i = 0; i < numModels; i++) {
-            for (let j = 0; j < numAttacksPerModel; j++) {
-                // Check for hit
-                if (Math.random() * 100 < adjustedAccuracy) {
-                    let effectiveDamage = damagePerHit;
-
-                    // Calculate armor reduction
-                    let armorDifference = enemyArmor - armorPiercing;
-                    if (armorDifference > 0) {
-                        effectiveDamage *= (1 - (armorDifference * 0.1));
-                    }
-
-                    // Damage is always rounded down
-                    totalDamage += Math.floor(Math.max(0, effectiveDamage));
+            for (let j = 0; j < numAttacks; j++) {
+                // Check if shot hits
+                const hitRoll = Math.floor(Math.random() * 100) + 1; // 1 to 100
+                if (hitRoll <= accuracy) {
+                    totalDamage += Math.floor(effectiveDamagePerHit); // Damage rounded down to natural numbers
                 }
             }
         }
@@ -91,21 +86,19 @@ document.addEventListener('DOMContentLoaded', () => {
         return totalDamage;
     }
 
-    // Event listener for squad name input changes (from my changes)
+    // Event listener for squad name input changes
     squadNameInput.addEventListener('input', (event) => {
         const squadName = event.target.value.trim();
         loadFormData(squadName);
     });
 
-    // Event listener for form submission to save data and calculate (combined)
-    form.addEventListener('submit', (event) => {
-        event.preventDefault(); // Prevent default form submission
-        saveFormData(); // My changes
+    // Event listener for the calculate button click (since form doesn't have a submit type button)
+    document.querySelector('.calculator-form button').addEventListener('click', () => {
+        saveFormData(); // Save current state before calculation
 
-        // Remote changes for calculation
         const numModels = parseInt(document.getElementById('numModels').value);
-        const damagePerHit = parseInt(document.getElementById('damage').value);
-        const numAttacksPerModel = parseInt(document.getElementById('numAttacks').value);
+        const damagePerModel = parseInt(document.getElementById('damage').value);
+        const numAttacks = parseInt(document.getElementById('numAttacks').value);
         const accuracy = parseInt(document.getElementById('accuracy').value);
         const optimalDistance = parseInt(document.getElementById('optimalDistance').value);
         const accuracyFalloff = parseInt(document.getElementById('accuracyFalloff').value);
@@ -115,8 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const calculatedDamage = calculateSquadDamage(
             numModels,
-            damagePerHit,
-            numAttacksPerModel,
+            damagePerModel,
+            numAttacks,
             accuracy,
             optimalDistance,
             accuracyFalloff,
@@ -125,18 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
             enemyArmor
         );
 
-        resultDiv.innerHTML = `Total Squad Damage: ${calculatedDamage}`;
+        totalDamageDisplay.textContent = calculatedDamage;
 
-        console.log('Form Submitted and data saved for:', squadNameInput.value); // My changes
+        console.log('Damage calculated and data saved for:', squadNameInput.value);
     });
 
-    // Also save data when any numerical input changes or loses focus (from my changes)
-    inputFields.forEach(input => {
-        input.addEventListener('change', saveFormData);
-        input.addEventListener('blur', saveFormData);
-    });
-
-    // Initial load in case user navigates back and squad name is pre-filled by browser (from my changes)
+    // Initial load in case user navigates back and squad name is pre-filled by browser
     if (squadNameInput.value.trim()) {
         loadFormData(squadNameInput.value.trim());
     }
