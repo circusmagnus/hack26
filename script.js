@@ -4,9 +4,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalDamageDisplay = document.getElementById('totalDamage'); // For displaying result
     const squadNameInput = document.getElementById('squadName');
     
-    // Using a simple in-memory object for session persistence as discussed in tech stack for SCRUM-554.
-    // This will be cleared on page refresh, but persists for the current session for quick re-entry.
-    let sessionSquadData = {}; 
+    // Initialize sessionSquadData from sessionStorage, or an empty object if not present
+    // This will now persist across page refreshes within the same browser tab.
+    let sessionSquadData = JSON.parse(sessionStorage.getItem('squadCalculatorData')) || {};
 
     const saveFormData = () => {
         const squadName = squadNameInput.value.trim();
@@ -23,10 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 enemyArmor: document.getElementById('enemyArmor').value,
             };
             sessionSquadData[squadName] = currentData;
+            sessionStorage.setItem('squadCalculatorData', JSON.stringify(sessionSquadData)); // Save to sessionStorage
         }
     };
 
     const loadFormData = (squadName) => {
+        // Retrieve directly from the in-memory object which was initialized from sessionStorage
+        // This ensures the latest state from sessionStorage is reflected.
         if (sessionSquadData[squadName]) {
             const data = sessionSquadData[squadName];
             document.getElementById('numModels').value = data.numModels;
