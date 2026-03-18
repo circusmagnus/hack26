@@ -1,0 +1,47 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+    overflow: hidden;
+}
+
+#game-board {
+    position: relative;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    border: 2px solid #333;
+}
+
+.board-field {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-color: #add8e6;
+    border: 1px solid #000;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8em;
+    box-sizing: border-box;
+}
+
+.board-field.start {
+    background-color: #90ee90;
+}
+
+.board-field.end {
+    background-color: #ff6347;
+}
+
+.card-slot {
+    width: 15px;
+    height: 20px;
+    border: 1px dashed #555;
+    margin: 2px;
+    background-color: #fff;
+}
