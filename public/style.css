@@ -1,0 +1,47 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+#game-board {
+    display: flex;
+    flex-wrap: wrap;
+    width: 600px; /* Adjust as needed */
+    height: 600px; /* Adjust as needed */
+    border: 2px solid black;
+    border-radius: 50%;
+    position: relative;
+}
+
+.field {
+    width: 50px;
+    height: 50px;
+    border: 1px solid gray;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e0e0e0;
+    position: absolute;
+}
+
+.player {
+    width: 20px;
+    height: 20px;
+    background-color: blue;
+    border-radius: 50%;
+    position: absolute;
+}
+
+#roll-dice {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
