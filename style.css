@@ -1,13 +1,14 @@
+/* Basic styling for the game */
 body {
+    font-family: Arial, sans-serif;
     display: flex;
-    flex-direction: column; /* From my commit */
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     min-height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
     overflow: hidden; /* From HEAD */
-    font-family: sans-serif; /* From my commit */
 }
 
 #game-board {
@@ -16,34 +17,33 @@ body {
     height: 600px;
     border: 2px solid #333;
     border-radius: 50%;
-    display: flex; /* From my commit */
-    justify-content: center; /* From my commit */
-    align-items: center; /* From my commit */
-    background-color: #e0e0e0; /* From my commit */
+    margin-top: 20px;
+    display: flex; /* From HEAD */
+    justify-content: center; /* From HEAD */
+    align-items: center; /* From HEAD */
+    background-color: #e0e0e0; /* From HEAD */
 }
 
 .board-field {
     position: absolute;
     width: 60px;
     height: 60px;
-    background-color: lightblue; /* My color */
-    border: 1px solid blue; /* My color */
+    border: 1px solid #aaa; /* My choice */
     border-radius: 50%;
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 12px; /* My font size */
+    justify-content: center;
+    background-color: #fff; /* My choice */
     box-sizing: border-box;
+    font-size: 12px; /* From HEAD */
 }
 
 .board-field.start {
-    background-color: green; /* My color */
-    color: white;
+    background-color: #aaffaa; /* My choice */
 }
 
 .board-field.end {
-    background-color: red; /* My color */
-    color: white;
+    background-color: #ffaaaa; /* My choice */
 }
 
 .card-slot {
@@ -52,4 +52,32 @@ body {
     border: 1px dashed #555;
     margin: 2px;
     background-color: #fff;
+}
+
+.player {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: blue;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8em;
+    font-weight: bold;
+    z-index: 10;
+}
+
+#roll-dice-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+#dice-result {
+    margin-top: 10px;
+    font-size: 1.1em;
+    font-weight: bold;
 }
