@@ -73,10 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let effectiveDamagePerHit = damagePerModel;
         if (enemyArmor > armorPiercing) {
             const armorDifference = enemyArmor - armorPiercing;
-            effectiveDamagePerHit *= (1 - (armorDifference * 0.1)); // 10% reduction per point
+            // Proposed fix: Reduce damage by a fixed amount per armor point difference, ensuring it doesn't go below 1.
+            // This prevents damage from easily becoming zero due to aggressive percentage reduction.
+            effectiveDamagePerHit = Math.max(1, damagePerModel - armorDifference);
         }
         
-        // Ensure effectiveDamagePerHit is not negative
+        // Ensure effectiveDamagePerHit is not negative (redundant with Math.max, but kept for robustness)
         if (effectiveDamagePerHit < 0) effectiveDamagePerHit = 0;
 
         for (let i = 0; i < numModels; i++) {
