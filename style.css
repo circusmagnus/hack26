@@ -1,41 +1,49 @@
 body {
     display: flex;
+    flex-direction: column; /* From my commit */
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     margin: 0;
     background-color: #f0f0f0;
-    overflow: hidden;
+    overflow: hidden; /* From HEAD */
+    font-family: sans-serif; /* From my commit */
 }
 
 #game-board {
     position: relative;
     width: 600px;
     height: 600px;
-    border-radius: 50%;
     border: 2px solid #333;
+    border-radius: 50%;
+    display: flex; /* From my commit */
+    justify-content: center; /* From my commit */
+    align-items: center; /* From my commit */
+    background-color: #e0e0e0; /* From my commit */
 }
 
 .board-field {
     position: absolute;
     width: 60px;
     height: 60px;
-    background-color: #add8e6;
-    border: 1px solid #000;
+    background-color: lightblue; /* My color */
+    border: 1px solid blue; /* My color */
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 0.8em;
+    font-size: 12px; /* My font size */
     box-sizing: border-box;
 }
 
 .board-field.start {
-    background-color: #90ee90;
+    background-color: green; /* My color */
+    color: white;
 }
 
 .board-field.end {
-    background-color: #ff6347;
+    background-color: red; /* My color */
+    color: white;
 }
 
 .card-slot {
