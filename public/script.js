@@ -1,42 +1,33 @@
-// script.js
 
-const gameBoard = document.getElementById('game-board');
+let players = [];
+let currentPlayerIndex = 0;
+const boardSize = 25; // Configurable board size
+
 const rollDiceButton = document.getElementById('roll-dice');
+const addPlayerButton = document.getElementById('add-player');
 const messageParagraph = document.getElementById('message');
+const gameBoard = document.getElementById('game-board');
+const playersContainer = document.getElementById('players-container');
 
-const numberOfFields = 24; // Configurable between 20-30
-
-// Game state object
-const game = {
-    players: [{ id: 1, name: "Player 1", position: 0 }], // Placeholder player
-    gameEnded: false,
-    winner: null
-};
-
-function initializeBoard(numFields) {
-    // Clear existing fields
-    gameBoard.innerHTML = '';
-
-    const radius = gameBoard.offsetWidth / 2 - 50; // Adjust for field size
-    const centerX = gameBoard.offsetWidth / 2;
-    const centerY = gameBoard.offsetHeight / 2;
-
-    for (let i = 0; i < numFields; i++) {
+function initializeBoard() {
+    gameBoard.innerHTML = ''; // Clear existing board
+    for (let i = 0; i < boardSize; i++) {
         const field = document.createElement('div');
-        field.classList.add('board-field');
-        field.dataset.fieldIndex = i;
+        field.classList.add('field');
+        field.id = `field-${i}`;
+        // Position fields in a circle
+        const angle = (i / boardSize) * 2 * Math.PI - Math.PI / 2; // Start at the top
+        const radius = 250; 
+        const centerX = gameBoard.offsetWidth / 2;
+        const centerY = gameBoard.offsetHeight / 2;
 
-        const angle = (i / numFields) * 2 * Math.PI - Math.PI / 2; // Start at the top (-PI/2)
-        const x = centerX + radius * Math.cos(angle) - field.offsetWidth / 2;
-        const y = centerY + radius * Math.sin(angle) - field.offsetHeight / 2;
-
-        field.style.left = `${x}px`;
-        field.style.top = `${y}px`;
+        field.style.left = `${centerX + radius * Math.cos(angle) - 25}px`;
+        field.style.top = `${centerY + radius * Math.sin(angle) - 25}px`;
 
         if (i === 0) {
             field.classList.add('start-field');
             field.textContent = 'Start';
-        } else if (i === numFields - 1) {
+        } else if (i === boardSize - 1) {
             field.classList.add('end-field');
             field.textContent = 'End';
         } else {
@@ -45,61 +36,68 @@ function initializeBoard(numFields) {
 
         gameBoard.appendChild(field);
     }
-    updatePlayerPositionUI(game.players[0]); // Place the placeholder player on the board
+    updatePlayersUI();
 }
 
-// Function to update player's visual position on the board
-function updatePlayerPositionUI(player) {
-    // Remove previous player representation
-    const existingPlayerElem = document.querySelector(`.player[data-player-id="${player.id}"]`);
-    if (existingPlayerElem) {
-        existingPlayerElem.remove();
-    }
+function updatePlayersUI() {
+    // Clear existing player markers
+    document.querySelectorAll('.player').forEach(playerDiv => playerDiv.remove());
+    playersContainer.innerHTML = '';
 
-    const currentField = document.querySelector(`.board-field[data-field-index="${player.position}"]`);
-    if (currentField) {
-        const playerElem = document.createElement('div');
-        playerElem.classList.add('player');
-        playerElem.dataset.playerId = player.id;
-        playerElem.textContent = player.id; // Display player ID for now
-        currentField.appendChild(playerElem);
-    }
-}
-
-
-function checkWinCondition() {
-    for (const player of game.players) {
-        if (player.position >= numberOfFields - 1) {
-            game.gameEnded = true;
-            game.winner = player;
-            messageParagraph.textContent = `${player.name} has reached the end and won the game!`;
-            rollDiceButton.disabled = true; // Disable further actions
-            console.log(`${player.name} wins!`);
-            return;
+    players.forEach((player) => {
+        const currentField = document.getElementById(`field-${player.position}`);
+        if (currentField) {
+            const playerDiv = document.createElement('div');
+            playerDiv.classList.add('player');
+            playerDiv.style.backgroundColor = player.color;
+            playerDiv.textContent = player.id;
+            // Adjust player position on the field if multiple players are on the same field
+            const playersOnField = currentField.querySelectorAll('.player').length;
+            playerDiv.style.left = `${playersOnField * 5}px`;
+            playerDiv.style.top = `${playersOnField * 5}px`;
+            currentField.appendChild(playerDiv);
         }
-    }
+
+        const playerStatus = document.createElement('p');
+        playerStatus.id = `player-status-${player.id}`;
+        playerStatus.textContent = `Player ${player.id} (${player.color}): Position ${player.position}`;
+        playersContainer.appendChild(playerStatus);
+    });
 }
 
-// Temporary function for testing win condition - Porthos will implement actual dice roll and movement
-function movePlayer(player, steps) {
-    if (game.gameEnded) return;
-
-    player.position += steps;
-    if (player.position >= numberOfFields - 1) {
-        player.position = numberOfFields - 1; // Ensure player stops at the last field
-    }
-    updatePlayerPositionUI(player);
-    checkWinCondition();
-}
-
-// Attach a temporary event listener to the roll dice button for testing
-rollDiceButton.addEventListener('click', () => {
-    if (!game.gameEnded) {
-        // Simulate a successful roll for testing the win condition
-        movePlayer(game.players[0], 1);
-        messageParagraph.textContent = `Player 1 moved to position ${game.players[0].position}.`;
-    }
+addPlayerButton.addEventListener('click', () => {
+    const playerColors = ['red', 'green', 'purple', 'orange', 'black'];
+    const newPlayerId = players.length + 1;
+    const newPlayer = {
+        id: newPlayerId,
+        position: 0,
+        color: playerColors[newPlayerId - 1] || 'gray' // Assign a color, default to gray
+    };
+    players.push(newPlayer);
+    updatePlayersUI();
+    messageParagraph.textContent = `Player ${newPlayerId} added.`;
 });
 
+rollDiceButton.addEventListener('click', () => {
+    if (players.length === 0) {
+        messageParagraph.textContent = "Please add at least one player to start the game.";
+        return;
+    }
 
-initializeBoard(numberOfFields);
+    const currentPlayer = players[currentPlayerIndex];
+    const roll = Math.floor(Math.random() * 6) + 1;
+    messageParagraph.textContent = `Player ${currentPlayer.id} rolled a ${roll}.`;
+
+    if (roll === 5 || roll === 6) {
+        currentPlayer.position = (currentPlayer.position + 1) % boardSize;
+        messageParagraph.textContent += ` Player ${currentPlayer.id} moved to position ${currentPlayer.position}.`;
+        updatePlayersUI();
+    } else {
+        messageParagraph.textContent += ` Player ${currentPlayer.id} no movement.`;
+    }
+
+    // Move to the next player's turn
+    currentPlayerIndex = (currentPlayerIndex + 1) % players.length;
+});
+
+initializeBoard();
