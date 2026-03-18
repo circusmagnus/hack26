@@ -132,20 +132,27 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('.calculator-form button').addEventListener('click', () => {
         saveFormData(); // Save current state before calculation
 
-        const getInputValue = (id) => {
-            const value = document.getElementById(id).value;
-            return parseInt(value) || 0; // Default to 0 if NaN or empty
-        };
+        const numModels = parseInt(document.getElementById('numModels').value, 10) || 0;
+        const damagePerModel = parseInt(document.getElementById('damage').value, 10) || 0;
+        const numAttacks = parseInt(document.getElementById('numAttacks').value, 10) || 0;
+        const accuracy = parseInt(document.getElementById('accuracy').value, 10) || 0;
+        const optimalDistance = parseInt(document.getElementById('optimalDistance').value, 10) || 0;
+        const accuracyFalloff = parseInt(document.getElementById('accuracyFalloff').value, 10) || 0;
+        const distanceToEnemy = parseInt(document.getElementById('distanceToEnemy').value, 10) || 0;
+        const armorPiercing = parseInt(document.getElementById('armorPiercing').value, 10) || 0;
+        const enemyArmor = parseInt(document.getElementById('enemyArmor').value, 10) || 0;
 
-        const numModels = getInputValue('numModels');
-        const damagePerModel = getInputValue('damage');
-        const numAttacks = getInputValue('numAttacks');
-        const accuracy = getInputValue('accuracy');
-        const optimalDistance = getInputValue('optimalDistance');
-        const accuracyFalloff = getInputValue('accuracyFalloff');
-        const distanceToEnemy = getInputValue('distanceToEnemy');
-        const armorPiercing = getInputValue('armorPiercing');
-        const enemyArmor = getInputValue('enemyArmor');
+        console.log('Parsed Input Values:', {
+            numModels,
+            damagePerModel,
+            numAttacks,
+            accuracy,
+            optimalDistance,
+            accuracyFalloff,
+            distanceToEnemy,
+            armorPiercing,
+            enemyArmor
+        });
 
         const averageCalculatedDamage = calculateAverageSquadDamage(
             numModels,
@@ -162,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         totalDamageDisplay.textContent = averageCalculatedDamage;
 
         console.log('Average Damage calculated and data saved for:', squadNameInput.value);
+        console.log('Displayed Average Damage:', averageCalculatedDamage);
     });
 
     // Initial load in case user navigates back and squad name is pre-filled by browser
